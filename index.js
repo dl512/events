@@ -1,9 +1,6 @@
 var request = new XMLHttpRequest();
-request.open("GET", "hk_events.csv", false);
-request.send(null);
-
 var csvData = new Array();
-var jsonObject = request.responseText.split(/\r?\n|\r/);
+var numList = new Array();
 
 function processData(data) {
   const dataArray = [];
@@ -24,28 +21,32 @@ function processData(data) {
       }
     }
   }
-
   dataArray.push(element.trim().replace(/^"|"$/g, ""));
-
   return dataArray;
 }
 
-for (var i = 1; i < jsonObject.length; i++) {
-  const dataArray = processData(jsonObject[i]);
-  if (dataArray[0] === "Y" && dataArray[1] === "Free") {
-    csvData.push(dataArray);
+function processFile(fileName) {
+  request.open("GET", fileName, false);
+  request.send(null);
+  var jsonObject = request.responseText.split(/\r?\n|\r/);
+
+  for (var i = 1; i < jsonObject.length; i++) {
+    const dataArray = processData(jsonObject[i]);
+    if (dataArray[0] === "Y" && dataArray[1] === "Free") {
+      csvData.push(dataArray);
+    }
   }
 }
+processFile("event.csv");
+processFile("exhibition.csv");
 
 function showEvent(n) {
-  $("img").attr("src", "img/" + csvData[n][8] + ".jpg");
+  $("img").attr("src", "img/" + csvData[n][11] + ".jpg");
   $(".name").text(csvData[n][2]);
-  $(".date").text(csvData[n][5]);
-  $(".location").text(csvData[n][7]);
-  $(".link").attr("href", "https://www.instagram.com/" + csvData[n][4]);
+  $(".date").text(csvData[n][6]);
+  $(".location").text(csvData[n][10]);
+  $(".link").attr("href", csvData[n][5]);
 }
-
-var numList = new Array();
 
 function initialize() {
   var randNum = Math.floor(Math.random() * csvData.length);
