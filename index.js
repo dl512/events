@@ -59,9 +59,26 @@ function showEvent(n) {
   }
 
   $(".name").text(csvData[n][2]);
-  $(".date").text(csvData[n][6]);
-  $(".location").text(csvData[n][10]);
-  $(".link").attr("href", csvData[n][5]);
+
+  if (csvData[n][6].length > 0) {
+    $(".date-emojii").show();
+    $(".date").text(csvData[n][6]);
+  } else {
+    $(".date-emojii").hide();
+  }
+
+  if (csvData[n][10].length > 0) {
+    $(".location-emojii").show();
+    $(".location").text(csvData[n][10]);
+  } else {
+    $(".location-emojii").hide();
+  }
+
+  if (csvData[n][5].length > 0) {
+    $(".link").attr("href", csvData[n][5]);
+  } else {
+    $(".link").attr("href", "https://www.instagram.com/" + csvData[n][4]);
+  }
 }
 
 function initialize() {
