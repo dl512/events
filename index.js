@@ -32,16 +32,32 @@ function processFile(fileName) {
 
   for (var i = 1; i < jsonObject.length; i++) {
     const dataArray = processData(jsonObject[i]);
-    if (dataArray[0] === "Y" && dataArray[1] === "Free") {
+    if (dataArray[0] === "Y") {
       csvData.push(dataArray);
     }
   }
 }
+
 processFile("event.csv");
 processFile("exhibition.csv");
 
 function showEvent(n) {
-  $("img").attr("src", "img/" + csvData[n][11] + ".jpg");
+  if (csvData[n][11].length > 0) {
+    $(".eventImg").attr("src", "img/" + csvData[n][11] + ".jpg");
+  } else {
+    if (csvData[n][3].length > 0) {
+      $(".eventImg").attr("src", "img/standard/" + csvData[n][3] + ".png");
+    } else {
+      $(".eventImg").attr("src", "img/standard/17. 其他.png");
+    }
+  }
+
+  if (csvData[n][1] === "Free") {
+    $(".free").show();
+  } else {
+    $(".free").hide();
+  }
+
   $(".name").text(csvData[n][2]);
   $(".date").text(csvData[n][6]);
   $(".location").text(csvData[n][10]);
