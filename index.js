@@ -1,8 +1,17 @@
 var request = new XMLHttpRequest();
 var csvData = new Array();
 var numList = new Array();
+var day = 60 * 60 * 24 * 1000;
 var date = new Date();
 var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+var beginDate = today;
+var week = new Array();
+for (i = 0; i <= (7 - today.getDay()) % 7; i++) {
+  week.push(beginDate);
+  beginDate = new Date(beginDate.getTime() + day);
+}
+
 var selector = "all";
 
 function processData(data) {
@@ -99,7 +108,6 @@ function dateStrToArray(dateStr) {
     var endDate = strToDate(dateStr.split(" ")[1]);
     while (beginDate <= endDate) {
       dateList.push(beginDate);
-      var day = 60 * 60 * 24 * 1000;
       beginDate = new Date(beginDate.getTime() + day);
     }
   } else {
@@ -113,7 +121,6 @@ function dateStrToArray(dateStr) {
 
         while (beginDate <= endDate) {
           dateList.push(beginDate);
-          var day = 60 * 60 * 24 * 1000;
           beginDate = new Date(beginDate.getTime() + day);
         }
       }
@@ -124,8 +131,19 @@ function dateStrToArray(dateStr) {
 
 function includeDate(dateList, date) {
   for (i = 0; i < dateList.length; i++) {
-    if (dateList[i].getTime() == date.getTime()) {
+    if (date.getTime() == dateList[i].getTime()) {
       return true;
+    }
+  }
+  return false;
+}
+
+function includeWeek(dateList, week) {
+  for (i = 0; i < week.length; i++) {
+    for (j = 0; j < dateList.length; j++) {
+      if (week[i].getTime() == dateList[j].getTime()) {
+        return true;
+      }
     }
   }
   return false;
@@ -141,6 +159,15 @@ function selectEvent(selector) {
       while (includeDate(dateList, today) == false) {
         var randNum = Math.floor(Math.random() * csvData.length);
         var dateList = dateStrToArray(csvData[randNum][6]);
+      }
+    } else {
+      if (selector == "week") {
+        var randNum = Math.floor(Math.random() * csvData.length);
+        var dateList = dateStrToArray(csvData[randNum][6]);
+        while (includeWeek(dateList, week) == false) {
+          var randNum = Math.floor(Math.random() * csvData.length);
+          var dateList = dateStrToArray(csvData[randNum][6]);
+        }
       }
     }
   }
@@ -171,14 +198,20 @@ $(".prev").on("click", function () {
 
 $(".date-selector").on("click", function () {
   if (selector === "all") {
-    selector = "today";
-    $(".date-selector").text("即日");
+    selector = "week";
+    $(".date-selector").text("本週");
     initialize();
   } else {
-    if (selector === "today") {
-      selector = "all";
-      $(".date-selector").text("全部");
+    if (selector === "week") {
+      selector = "today";
+      $(".date-selector").text("即日");
       initialize();
+    } else {
+      if (selector === "today") {
+        selector = "all";
+        $(".date-selector").text("全部");
+        initialize();
+      }
     }
   }
 });
