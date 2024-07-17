@@ -77,6 +77,7 @@ function showEvent(n) {
     $(".date").text(csvData[n][6]);
   } else {
     $(".date-emojii").hide();
+    $(".date").text("");
   }
 
   if (csvData[n][10].length > 0) {
@@ -84,6 +85,7 @@ function showEvent(n) {
     $(".location").text(csvData[n][10]);
   } else {
     $(".location-emojii").hide();
+    $(".location").text("");
   }
 
   if (csvData[n][5].length > 0) {
