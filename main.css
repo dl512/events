@@ -172,22 +172,22 @@ h2 {
     color: white;
 }
 
-a:link {
+.white-link a:link {
     color: white;
     text-decoration: none;
   }
   
-  a:visited {
+  .white-link  a:visited {
     color: white;
     text-decoration: none;
   }
   
-  a:hover {
+  .white-link  a:hover {
     color: white;
     text-decoration: none;
   }
   
-  a:active {
+  .hwhite-link a:active {
     color: white;
     text-decoration: none;
   }
