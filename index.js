@@ -12,7 +12,15 @@ for (i = 0; i <= (7 - today.getDay()) % 7; i++) {
   beginDate = new Date(beginDate.getTime() + day);
 }
 
-var selector = "all";
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+const selector = getQueryParam("value");
+console.log(selector);
+
+// var selector = "all";
 
 function processData(data) {
   const dataArray = [];
@@ -154,21 +162,31 @@ function includeWeek(dateList, week) {
 function selectEvent(selector) {
   if (selector === "all") {
     var randNum = Math.floor(Math.random() * csvData.length);
+    var isExhibition = csvData[randNum][3];
+    while (isExhibition == "exhibition") {
+      var randNum = Math.floor(Math.random() * csvData.length);
+      var isExhibition = csvData[randNum][3];
+    }
   } else {
     if (selector == "today") {
       var randNum = Math.floor(Math.random() * csvData.length);
       var dateList = dateStrToArray(csvData[randNum][6]);
-      while (includeDate(dateList, today) == false) {
+      var isExhibition = csvData[randNum][3];
+      while (
+        includeDate(dateList, today) == false ||
+        isExhibition == "exhibition"
+      ) {
         var randNum = Math.floor(Math.random() * csvData.length);
         var dateList = dateStrToArray(csvData[randNum][6]);
+        var isExhibition = csvData[randNum][3];
       }
     } else {
-      if (selector == "week") {
+      if (selector == "exhibition") {
         var randNum = Math.floor(Math.random() * csvData.length);
-        var dateList = dateStrToArray(csvData[randNum][6]);
-        while (includeWeek(dateList, week) == false) {
+        var isExhibition = csvData[randNum][3];
+        while (isExhibition != "exhibition") {
           var randNum = Math.floor(Math.random() * csvData.length);
-          var dateList = dateStrToArray(csvData[randNum][6]);
+          var isExhibition = csvData[randNum][3];
         }
       }
     }
@@ -176,14 +194,15 @@ function selectEvent(selector) {
   return randNum;
 }
 
-function initialize() {
+function initialize(selector) {
+  console.log(selector);
   numList = new Array();
   var eventIndex = selectEvent(selector);
   numList.push(eventIndex);
   showEvent(eventIndex);
 }
 
-initialize();
+initialize(selector);
 
 $(".next").on("click", function () {
   var eventIndex = selectEvent(selector);
@@ -198,24 +217,24 @@ $(".prev").on("click", function () {
   }
 });
 
-$(".date-selector").on("click", function () {
-  if (selector === "all") {
-    selector = "week";
-    $(".date-selector").text("本週");
-    initialize();
-  } else {
-    if (selector === "week") {
-      selector = "today";
-      $(".date-selector").text("即日");
-      initialize();
-    } else {
-      if (selector === "today") {
-        selector = "all";
-        $(".date-selector").text("全部");
-        initialize();
-      }
-    }
-  }
-});
+// $(".date-selector").on("click", function () {
+//   if (selector === "all") {
+//     selector = "week";
+//     $(".date-selector").text("本週");
+//     initialize();
+//   } else {
+//     if (selector === "week") {
+//       selector = "today";
+//       $(".date-selector").text("即日");
+//       initialize();
+//     } else {
+//       if (selector === "today") {
+//         selector = "all";
+//         $(".date-selector").text("全部");
+//         initialize();
+//       }
+//     }
+//   }
+// });
 
 console.log(csvData);
