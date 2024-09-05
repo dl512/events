@@ -4,6 +4,7 @@ var numList = new Array();
 var day = 60 * 60 * 24 * 1000;
 var date = new Date();
 var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+var pointer = 0;
 
 var beginDate = today;
 var week = new Array();
@@ -19,8 +20,6 @@ function getQueryParam(param) {
 
 const selector = getQueryParam("value");
 console.log(selector);
-
-// var selector = "all";
 
 function processData(data) {
   const dataArray = [];
@@ -216,25 +215,5 @@ $(".prev").on("click", function () {
     showEvent(numList[numList.length - 1]);
   }
 });
-
-// $(".date-selector").on("click", function () {
-//   if (selector === "all") {
-//     selector = "week";
-//     $(".date-selector").text("本週");
-//     initialize();
-//   } else {
-//     if (selector === "week") {
-//       selector = "today";
-//       $(".date-selector").text("即日");
-//       initialize();
-//     } else {
-//       if (selector === "today") {
-//         selector = "all";
-//         $(".date-selector").text("全部");
-//         initialize();
-//       }
-//     }
-//   }
-// });
 
 console.log(csvData);
