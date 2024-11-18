@@ -1,0 +1,149 @@
+/* Dark Mode Styles */
+body {
+    font-family: 'Georgia', serif; /* Elegant serif font */
+    margin: 0;
+    padding: 20px;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light gray text */
+}
+
+h1 {
+    text-align: center;
+    color: #e0e0e0; /* Light gray for headings */
+    margin-bottom: 30px;
+    font-size: 2em; /* Larger title */
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555; /* Darker background for the switch */
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #e0e0e0; /* Light gray for the slider knob */
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4a9b9d; /* Soft teal for the active switch */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+#toggleLabel {
+    margin-left: 10px;
+    font-size: 1.1em;
+    color: #4a9b9d; /* Soft teal for label */
+}
+
+#eventList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.event {
+    background-color: #1e1e1e; /* Dark background for events */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px;
+    margin: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly more noticeable shadow */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.event:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Softer hover effect */
+}
+
+.event h2 {
+    margin: 0;
+    font-size: 1.6em; /* Heading size */
+    color: #4a9b9d; /* Soft teal for event titles */
+}
+
+.event p {
+    margin: 8px 0; /* Spacing between paragraphs */
+    color: #e0e0e0; /* Light gray for text */
+    font-size: 0.95em; /* Font size for readability */
+}
+
+@media (max-width: 600px) {
+    .event {
+        padding: 15px;
+        margin: 10px; /* Adjusted for mobile */
+    }
+
+    .event h2 {
+        font-size: 1.4em; /* Adjusted for mobile */
+    }
+
+    .event p {
+        font-size: 0.9em; /* Consistent font size for mobile */
+    }
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px; /* Increased space below buttons */
+}
+
+.filter-buttons button {
+    padding: 10px 20px; /* Larger padding */
+    margin: 0 10px; /* Space between buttons */
+    border: none;
+    border-radius: 5px;
+    background-color: #4a9b9d; /* Soft teal for buttons */
+    color: white; /* White text for buttons */
+    cursor: pointer;
+    font-size: 1em; /* Consistent font size */
+    transition: background-color 0.3s, transform 0.2s; /* Add transform for hover */
+}
+
+.filter-buttons button:hover {
+    background-color: #3a7b7d; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.filter-buttons button.active {
+    background-color: #3a7b7d; /* Active button color */
+}
