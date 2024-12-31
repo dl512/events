@@ -1,34 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event and Exhibition List</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
 
+  <!-- Google tag (gtag.js) -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-9XN8N66SKM"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-9XN8N66SKM");
+  </script>
+
+  <body>
     <h1>XPLORE Hong Kong 香港活動搜尋器</h1>
-    
+
     <div class="toggle-container">
-        <label class="switch">
-            <input type="checkbox" id="toggleSwitch">
-            <span class="slider"></span>
-        </label>
-        <span id="toggleLabel">搵活動</span>
+      <label class="switch">
+        <input type="checkbox" id="toggleSwitch" />
+        <span class="slider"></span>
+      </label>
+      <span id="toggleLabel">搵活動</span>
     </div>
 
     <div id="filterButtonsContainer" class="filter-buttons">
-        <button id="todayButton">今日</button>
-        <button id="weekendButton">今個Weekend</button>
-        <button id="allButton">全部</button>
-      </div>
+      <button id="todayButton">今日</button>
+      <button id="weekendButton">今個Weekend</button>
+      <button id="allButton">全部</button>
+    </div>
 
     <div id="eventList">
-        <!-- Events will be populated here -->
+      <!-- Events will be populated here -->
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
