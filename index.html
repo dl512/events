@@ -30,17 +30,19 @@
     <h1>XPLORE Hong Kong 香港活動搜尋器</h1>
 
     <div class="toggle-container">
-      <label class="switch">
-        <input type="checkbox" id="toggleSwitch" />
-        <span class="slider"></span>
-      </label>
-      <span id="toggleLabel">搵活動</span>
+      <button id="eventsButton" class="toggle-button active">搵活動</button>
+      <button id="exhibitionsButton" class="toggle-button">睇展覽</button>
     </div>
 
     <div id="filterButtonsContainer" class="filter-buttons">
       <button id="todayButton">今日</button>
       <button id="weekendButton">今個Weekend</button>
       <button id="allButton">全部</button>
+    </div>
+
+    <div id="categoryFilterContainer" class="category-filter">
+      <button id="allCategoriesButton" class="category-button active">全部</button>
+      <!-- Other category buttons will be added dynamically -->
     </div>
 
     <div id="eventList">

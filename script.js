@@ -1,5 +1,7 @@
 let currentDataType = "events"; // Default to events
 let currentFilter = "all"; // Default filter
+let currentCategory = "all"; // Default category
+let categories = new Set(); // To store unique categories
 
 async function fetchGoogleSheet(sheetName) {
   const sheetLink = `https://sheets.googleapis.com/v4/spreadsheets/1G_8RMWjf0T9sNdMxKYy_Fc051I6zhdLLy6ehLak4CX4/values/${sheetName}/?key=AIzaSyCPyerGljBK4JJ-XA3aRr5cRvWssI3rwhI`;
@@ -29,6 +31,24 @@ function displayData(data) {
   const eventList = document.getElementById("eventList");
   eventList.innerHTML = ""; // Clear previous entries
 
+  // Reset and update categories if we're showing events
+  if (currentDataType === "events") {
+    categories = new Set();
+    categories.add("all"); // Add default "all" category
+
+    // Collect all unique categories
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (row.length >= 4 && row[0].trim() === "Y") {
+        const eventCategories = row[3].split(",").map((cat) => cat.trim());
+        eventCategories.forEach((cat) => categories.add(cat));
+      }
+    }
+
+    // Update category buttons
+    updateCategoryButtons();
+  }
+
   const today = new Date();
   const todayString = today.toLocaleDateString("en-GB"); // Format as DD/MM
 
@@ -52,6 +72,7 @@ function displayData(data) {
       // Ensure there are enough columns
       const eventDateStr = row[6] ? row[6].trim() : ""; // Date in the CSV (7th column)
       const eventDates = parseDates(eventDateStr); // Get all dates covered by this event
+      const eventCategories = row[3].split(",").map((cat) => cat.trim());
 
       // Log the original date string and parsed dates
       // console.log(`Original Date String for row ${i}: "${eventDateStr}"`);
@@ -82,6 +103,14 @@ function displayData(data) {
         )
       ) {
         continue; // Skip if next Saturday and Sunday are not both in the list
+      }
+
+      // Skip if doesn't match category filter
+      if (
+        currentCategory !== "all" &&
+        !eventCategories.includes(currentCategory)
+      ) {
+        continue;
       }
 
       const eventDiv = document.createElement("div");
@@ -192,59 +221,60 @@ async function loadData() {
 async function main() {
   await loadData();
 
-  // Add event listener to the toggle switch
-  document
-    .getElementById("toggleSwitch")
-    .addEventListener("change", function () {
-      currentDataType = this.checked ? "exhibition" : "events";
-      document.getElementById("toggleLabel").textContent = this.checked
-        ? "睇展覽"
-        : "搵活動";
-      loadData();
+  // Add event listeners for the toggle buttons
+  const eventsButton = document.getElementById("eventsButton");
+  const exhibitionsButton = document.getElementById("exhibitionsButton");
 
-      // Show or hide filter buttons based on current data type
-      const filterButtonsContainer = document.getElementById(
-        "filterButtonsContainer"
-      );
-      if (currentDataType === "exhibition") {
-        filterButtonsContainer.style.display = "none"; // Hide filter buttons
-      } else {
-        filterButtonsContainer.style.display = "flex"; // Show filter buttons for events
-      }
-    });
+  eventsButton.addEventListener("click", function () {
+    currentDataType = "events";
+    currentCategory = "all"; // Reset category when switching to events
+    updateActiveToggleButton(this);
+    const filterButtonsContainer = document.getElementById(
+      "filterButtonsContainer"
+    );
+    filterButtonsContainer.style.display = "flex";
+    loadData();
+  });
+
+  exhibitionsButton.addEventListener("click", function () {
+    currentDataType = "exhibition";
+    const filterButtonsContainer = document.getElementById(
+      "filterButtonsContainer"
+    );
+    filterButtonsContainer.style.display = "none";
+    document.getElementById("categoryFilterContainer").style.display = "none";
+    updateActiveToggleButton(this);
+    loadData();
+  });
 
   // Initially set the filter buttons visibility based on the current data type
   const filterButtonsContainer = document.getElementById(
     "filterButtonsContainer"
   );
   if (currentDataType === "exhibition") {
-    filterButtonsContainer.style.display = "none"; // Hide on load if exhibitions are selected
+    filterButtonsContainer.style.display = "none";
   }
 
-  // Add event listeners for filter buttons only if current data type is events
-  if (currentDataType === "events") {
-    document
-      .getElementById("todayButton")
-      .addEventListener("click", function () {
-        currentFilter = "today";
-        updateActiveFilterButton(this);
-        loadData();
-      });
+  // Add event listeners for filter buttons
+  document.getElementById("todayButton").addEventListener("click", function () {
+    currentFilter = "today";
+    updateActiveFilterButton(this);
+    loadData();
+  });
 
-    document
-      .getElementById("weekendButton")
-      .addEventListener("click", function () {
-        currentFilter = "weekend";
-        updateActiveFilterButton(this);
-        loadData();
-      });
-
-    document.getElementById("allButton").addEventListener("click", function () {
-      currentFilter = "all";
+  document
+    .getElementById("weekendButton")
+    .addEventListener("click", function () {
+      currentFilter = "weekend";
       updateActiveFilterButton(this);
       loadData();
     });
-  }
+
+  document.getElementById("allButton").addEventListener("click", function () {
+    currentFilter = "all";
+    updateActiveFilterButton(this);
+    loadData();
+  });
 }
 
 // Function to update active filter button
@@ -254,6 +284,59 @@ function updateActiveFilterButton(activeButton) {
     button.classList.remove("active");
   });
   activeButton.classList.add("active");
+}
+
+// Add this new function to handle toggle button states
+function updateActiveToggleButton(activeButton) {
+  const buttons = document.querySelectorAll(".toggle-button");
+  buttons.forEach((button) => {
+    button.classList.remove("active");
+  });
+  activeButton.classList.add("active");
+}
+
+// Function to update category buttons
+function updateCategoryButtons() {
+  const container = document.getElementById("categoryFilterContainer");
+  container.innerHTML = ""; // Clear existing buttons
+
+  // Only show category filter for events
+  if (currentDataType === "events") {
+    container.style.display = "flex";
+
+    // Add "All" button
+    const allButton = document.createElement("button");
+    allButton.id = "allCategoriesButton";
+    allButton.className = `category-button ${
+      currentCategory === "all" ? "active" : ""
+    }`;
+    allButton.textContent = "全部";
+    allButton.addEventListener("click", () => {
+      currentCategory = "all";
+      updateCategoryButtons();
+      loadData();
+    });
+    container.appendChild(allButton);
+
+    // Add button for each category
+    categories.forEach((category) => {
+      if (category === "all") return; // Skip "all" as it's already added
+
+      const button = document.createElement("button");
+      button.className = `category-button ${
+        currentCategory === category ? "active" : ""
+      }`;
+      button.textContent = category;
+      button.addEventListener("click", () => {
+        currentCategory = category;
+        updateCategoryButtons();
+        loadData();
+      });
+      container.appendChild(button);
+    });
+  } else {
+    container.style.display = "none";
+  }
 }
 
 // Run main function
