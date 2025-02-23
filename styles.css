@@ -81,34 +81,51 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.event {
-    background-color: #1e1e1e; /* Dark background for events */
-    border-radius: 8px; /* Rounded corners */
-    padding: 20px;
-    margin: 15px;
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly more noticeable shadow */
-    transition: transform 0.2s, box-shadow 0.2s;
+    max-width: 800px; /* Increased to accommodate the image */
+    margin: 0 auto;
 }
 
-.event:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Softer hover effect */
+.event-card {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 0 20px 0;
+    display: flex;
+    gap: 20px;
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.event h2 {
+.event-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.event-content {
+    flex: 1;
+    min-width: 0; /* Prevents content from overflowing */
+}
+
+.event-content h2 {
     margin: 0;
-    font-size: 1.6em; /* Heading size */
+    font-size: 1.6em;
     color: #4a9b9d; /* Soft teal for event titles */
 }
 
-.event p {
-    margin: 8px 0; /* Spacing between paragraphs */
+.event-content p {
+    margin: 8px 0;
     color: #e0e0e0; /* Light gray for text */
-    font-size: 0.95em; /* Font size for readability */
+    font-size: 0.95em;
+}
+
+.event-content a {
+    color: inherit; /* Inherit color from parent */
+    text-decoration: none;
 }
 
 @media (max-width: 600px) {
@@ -123,6 +140,16 @@ h1 {
 
     .event p {
         font-size: 0.9em; /* Consistent font size for mobile */
+    }
+
+    .event-card {
+        flex-direction: column;
+    }
+
+    .event-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
     }
 }
 

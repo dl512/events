@@ -34,7 +34,7 @@ function displayData(data) {
   // Reset and update categories if we're showing events
   if (currentDataType === "events") {
     categories = new Set();
-    categories.add("all"); // Add default "all" category
+    categories.add("all");
 
     // Collect all unique categories
     for (let i = 1; i < data.length; i++) {
@@ -45,51 +45,35 @@ function displayData(data) {
       }
     }
 
-    // Update category buttons
     updateCategoryButtons();
   }
 
   const today = new Date();
-  const todayString = today.toLocaleDateString("en-GB"); // Format as DD/MM
+  const todayString = today.toLocaleDateString("en-GB");
 
   // Calculate the next Saturday and Sunday
   const nextSaturday = new Date(today);
   nextSaturday.setDate(today.getDate() + (6 - today.getDay()));
-
   const nextSunday = new Date(nextSaturday);
   nextSunday.setDate(nextSaturday.getDate() + 1);
-
   const nextSaturdayString = nextSaturday.toLocaleDateString("en-GB");
   const nextSundayString = nextSunday.toLocaleDateString("en-GB");
-
-  // console.log(
-  //   `Next Saturday: ${nextSaturdayString}, Next Sunday: ${nextSundayString}`
-  // );
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
     if (row.length >= 7 && row[0].trim() === "Y") {
-      // Ensure there are enough columns
-      const eventDateStr = row[6] ? row[6].trim() : ""; // Date in the CSV (7th column)
-      const eventDates = parseDates(eventDateStr); // Get all dates covered by this event
+      const eventDateStr = row[6] ? row[6].trim() : "";
+      const eventDates = parseDates(eventDateStr);
       const eventCategories = row[3].split(",").map((cat) => cat.trim());
 
-      // Log the original date string and parsed dates
-      // console.log(`Original Date String for row ${i}: "${eventDateStr}"`);
-      // console.log(
-      //   `Parsed Event Dates for row ${i}: ${eventDates
-      //     .map((date) => date.toLocaleDateString("en-GB"))
-      //     .join(", ")}`
-      // );
-
-      // Filter based on selected criteria
+      // Apply filters
       if (
         currentFilter === "today" &&
         !eventDates.some(
           (date) => date.toLocaleDateString("en-GB") === todayString
         )
       ) {
-        continue; // Skip if today is not in the list
+        continue;
       }
       if (
         currentFilter === "weekend" &&
@@ -102,10 +86,8 @@ function displayData(data) {
           )
         )
       ) {
-        continue; // Skip if next Saturday and Sunday are not both in the list
+        continue;
       }
-
-      // Skip if doesn't match category filter
       if (
         currentCategory !== "all" &&
         !eventCategories.includes(currentCategory)
@@ -113,33 +95,60 @@ function displayData(data) {
         continue;
       }
 
-      const eventDiv = document.createElement("div");
-      eventDiv.classList.add("event");
+      // Create event object
+      const eventData = {
+        title: row[2],
+        date: eventDateStr,
+        venue: row[10],
+        url: row[5],
+        photo: row[11] ? row[11].replace("@", "") : null,
+      };
 
+      // Create card element
+      const card = document.createElement("div");
+      card.className = "event-card";
+
+      // Add image if available
+      if (eventData.photo) {
+        const image = document.createElement("img");
+        image.src = eventData.photo;
+        image.className = "event-image";
+        image.alt = eventData.title;
+        card.appendChild(image);
+      }
+
+      // Create content container
+      const content = document.createElement("div");
+      content.className = "event-content";
+
+      // Create link
       const eventLink = document.createElement("a");
-      eventLink.href = row[5]; // URL from the sixth column
-      eventLink.target = "_blank"; // Open link in a new tab
-      eventLink.style.textDecoration = "none"; // Remove underline
+      eventLink.href = eventData.url;
+      eventLink.target = "_blank";
+      eventLink.style.textDecoration = "none";
 
+      // Add title
       const title = document.createElement("h2");
-      title.textContent = row[2]; // Title (third column)
-
-      const date = document.createElement("p");
-      date.innerHTML = `<i class="fas fa-calendar-alt"></i> ${eventDateStr}`; // Display the original date string
-
-      const venue = document.createElement("p");
-      venue.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${row[10]}`; // Venue (fifth column)
-
-      // Append elements to the link
+      title.textContent = eventData.title;
       eventLink.appendChild(title);
+
+      // Add date
+      const date = document.createElement("p");
+      date.innerHTML = `<i class="fas fa-calendar-alt"></i> ${eventData.date}`;
       eventLink.appendChild(date);
+
+      // Add venue
+      const venue = document.createElement("p");
+      venue.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${eventData.venue}`;
       eventLink.appendChild(venue);
-      eventDiv.appendChild(eventLink);
-      eventList.appendChild(eventDiv);
+
+      // Assemble the card
+      content.appendChild(eventLink);
+      card.appendChild(content);
+      eventList.appendChild(card);
     }
   }
 
-  // If no events are displayed, log a message
   if (eventList.children.length === 0) {
     console.log("No events found for the selected filter.");
   }
@@ -337,6 +346,36 @@ function updateCategoryButtons() {
   } else {
     container.style.display = "none";
   }
+}
+
+function createEventCard(event) {
+  const card = document.createElement("div");
+  card.className = "event-card";
+
+  // Create image if available
+  if (event.photo) {
+    const image = document.createElement("img");
+    image.src = event.photo;
+    image.className = "event-image";
+    image.alt = event.title;
+    card.appendChild(image);
+  }
+
+  const content = document.createElement("div");
+  content.className = "event-content";
+
+  // ... rest of your existing event card content ...
+  // Move all your existing content creation into the content div
+
+  card.appendChild(content);
+  return card;
+}
+
+function processEventData(data) {
+  return data.map((row) => ({
+    // ... other event properties ...
+    photo: row[11] ? row[11].replace("@", "") : null, // Column L (index 11) contains photo URL
+  }));
 }
 
 // Run main function
