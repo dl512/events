@@ -110,11 +110,38 @@ function displayData(data) {
 
       // Add image if available
       if (eventData.photo) {
+        // Create a container for the image
+        const imageContainer = document.createElement("div");
+        imageContainer.className = "event-image-container";
+
+        // Create both the direct image and linked image
         const image = document.createElement("img");
-        image.src = eventData.photo;
         image.className = "event-image";
         image.alt = eventData.title;
-        card.appendChild(image);
+
+        // Create a link wrapper
+        const imageLink = document.createElement("a");
+        imageLink.href = eventData.photo;
+        imageLink.target = "_blank";
+        imageLink.textContent = "Click to view image"; // Add text for the link
+
+        // Set image source
+        image.src = eventData.photo;
+
+        // Add both versions
+        imageContainer.appendChild(image);
+        imageContainer.appendChild(imageLink);
+
+        // Style to only show one version
+        imageLink.style.display = "none";
+
+        // If the direct image fails to load, show the link
+        image.onerror = function () {
+          image.style.display = "none";
+          imageLink.style.display = "flex";
+        };
+
+        card.appendChild(imageContainer);
       }
 
       // Create content container
