@@ -180,6 +180,24 @@ h1 {
     .event-image-container a {
         aspect-ratio: 1;
     }
+
+    /* Add these new styles for area filters */
+    .category-filter,
+    .area-filter {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 0 10px;
+        margin: 0 0 20px 0;
+    }
+
+    .category-button,
+    .area-button {
+        padding: 6px 12px;
+        font-size: 0.85em;
+        flex: 0 1 auto;
+        white-space: nowrap;
+    }
 }
 
 .filter-buttons {
