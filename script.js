@@ -2,6 +2,8 @@ let currentDataType = "events"; // Default to events
 let currentFilter = "all"; // Default filter
 let currentCategory = "all"; // Default category
 let categories = new Set(); // To store unique categories
+let currentArea = "all"; // Default area filter
+let areas = new Set(); // To store unique areas
 
 async function fetchGoogleSheet(sheetName) {
   const sheetLink = `https://sheets.googleapis.com/v4/spreadsheets/1G_8RMWjf0T9sNdMxKYy_Fc051I6zhdLLy6ehLak4CX4/values/${sheetName}/?key=AIzaSyCPyerGljBK4JJ-XA3aRr5cRvWssI3rwhI`;
@@ -31,21 +33,29 @@ function displayData(data) {
   const eventList = document.getElementById("eventList");
   eventList.innerHTML = ""; // Clear previous entries
 
-  // Reset and update categories if we're showing events
+  // Reset and update categories and areas
   if (currentDataType === "events") {
     categories = new Set();
+    areas = new Set();
     categories.add("all");
+    areas.add("all");
 
-    // Collect all unique categories
+    // Collect all unique categories and areas
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      if (row.length >= 4 && row[0].trim() === "Y") {
+      if (row.length >= 13 && row[0].trim() === "Y") {
+        // Categories (column D)
         const eventCategories = row[3].split(",").map((cat) => cat.trim());
         eventCategories.forEach((cat) => categories.add(cat));
+
+        // Areas (column M)
+        const eventAreas = row[12].split(",").map((area) => area.trim());
+        eventAreas.forEach((area) => areas.add(area));
       }
     }
 
     updateCategoryButtons();
+    updateAreaButtons();
   }
 
   const today = new Date();
@@ -61,12 +71,13 @@ function displayData(data) {
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
-    if (row.length >= 7 && row[0].trim() === "Y") {
+    if (row.length >= 13 && row[0].trim() === "Y") {
       const eventDateStr = row[6] ? row[6].trim() : "";
       const eventDates = parseDates(eventDateStr);
       const eventCategories = row[3].split(",").map((cat) => cat.trim());
+      const eventAreas = row[12].split(",").map((area) => area.trim());
 
-      // Apply filters
+      // Apply all filters
       if (
         currentFilter === "today" &&
         !eventDates.some(
@@ -92,6 +103,9 @@ function displayData(data) {
         currentCategory !== "all" &&
         !eventCategories.includes(currentCategory)
       ) {
+        continue;
+      }
+      if (currentArea !== "all" && !eventAreas.includes(currentArea)) {
         continue;
       }
 
@@ -263,7 +277,8 @@ async function main() {
 
   eventsButton.addEventListener("click", function () {
     currentDataType = "events";
-    currentCategory = "all"; // Reset category when switching to events
+    currentCategory = "all";
+    currentArea = "all"; // Reset area when switching
     updateActiveToggleButton(this);
     const filterButtonsContainer = document.getElementById(
       "filterButtonsContainer"
@@ -274,6 +289,7 @@ async function main() {
 
   exhibitionsButton.addEventListener("click", function () {
     currentDataType = "exhibition";
+    currentArea = "all"; // Reset area when switching
     const filterButtonsContainer = document.getElementById(
       "filterButtonsContainer"
     );
@@ -366,6 +382,47 @@ function updateCategoryButtons() {
       button.addEventListener("click", () => {
         currentCategory = category;
         updateCategoryButtons();
+        loadData();
+      });
+      container.appendChild(button);
+    });
+  } else {
+    container.style.display = "none";
+  }
+}
+
+// Add new function to update area buttons
+function updateAreaButtons() {
+  const container = document.getElementById("areaFilterContainer");
+  container.innerHTML = "";
+
+  if (currentDataType === "events" || currentDataType === "exhibition") {
+    container.style.display = "flex";
+
+    // Add "All" button
+    const allButton = document.createElement("button");
+    allButton.id = "allAreasButton";
+    allButton.className = `area-button ${
+      currentArea === "all" ? "active" : ""
+    }`;
+    allButton.textContent = "全部地區";
+    allButton.addEventListener("click", () => {
+      currentArea = "all";
+      updateAreaButtons();
+      loadData();
+    });
+    container.appendChild(allButton);
+
+    // Add button for each area
+    areas.forEach((area) => {
+      if (area === "all") return;
+
+      const button = document.createElement("button");
+      button.className = `area-button ${currentArea === area ? "active" : ""}`;
+      button.textContent = area;
+      button.addEventListener("click", () => {
+        currentArea = area;
+        updateAreaButtons();
         loadData();
       });
       container.appendChild(button);

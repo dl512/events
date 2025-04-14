@@ -250,3 +250,34 @@ h1 {
     color: #ffffff;
     background-color: #2a2a2a;
 }
+
+.area-filter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 30px 0;
+    padding: 0 20px;
+}
+
+.area-button {
+    padding: 8px 16px;
+    border: 1px solid #808080;
+    border-radius: 20px;
+    background-color: transparent;
+    color: #808080;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.area-button:hover {
+    border-color: #a0a0a0;
+    color: #a0a0a0;
+}
+
+.area-button.active {
+    border-color: #ffffff;
+    color: #ffffff;
+    background-color: #2a2a2a;
+}
