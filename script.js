@@ -115,7 +115,7 @@ function displayData(data) {
         date: eventDateStr,
         venue: row[10],
         url: row[5],
-        photo: row[11] ? row[11].replace("@", "") : null,
+        photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
       };
 
       // Create card element
