@@ -100,10 +100,10 @@ h1 {
 
 .event-image-container {
     width: 200px;
-    height: 200px;
+    height: 250px; /* Changed from 200px to maintain 4:5 ratio */
     flex-shrink: 0;
-    position: relative; /* For absolute positioning of link */
-    overflow: hidden; /* Contain the link */
+    position: relative;
+    overflow: hidden;
 }
 
 .event-image-container img {
@@ -174,11 +174,11 @@ h1 {
     .event-image-container {
         width: 100%;
         height: auto;
-        aspect-ratio: 1;
+        aspect-ratio: 4/5; /* Added to maintain 4:5 ratio on mobile */
     }
     
     .event-image-container a {
-        aspect-ratio: 1;
+        aspect-ratio: 4/5; /* Added to maintain 4:5 ratio for the link on mobile */
     }
 
     /* Add these new styles for area filters */
