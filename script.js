@@ -122,12 +122,12 @@ function displayData(data) {
       const card = document.createElement("div");
       card.className = "event-card";
 
-      // Add image if available
-      if (eventData.photo) {
-        // Create a container for the image
-        const imageContainer = document.createElement("div");
-        imageContainer.className = "event-image-container";
+      // Create image container
+      const imageContainer = document.createElement("div");
+      imageContainer.className = "event-image-container";
 
+      // Add image if available, otherwise add default icon
+      if (eventData.photo) {
         // Create both the direct image and linked image
         const image = document.createElement("img");
         image.className = "event-image";
@@ -137,7 +137,7 @@ function displayData(data) {
         const imageLink = document.createElement("a");
         imageLink.href = eventData.photo;
         imageLink.target = "_blank";
-        imageLink.textContent = "Click to view image"; // Add text for the link
+        imageLink.textContent = "Click to view image";
 
         // Set image source
         image.src = eventData.photo;
@@ -154,9 +154,14 @@ function displayData(data) {
           image.style.display = "none";
           imageLink.style.display = "flex";
         };
-
-        card.appendChild(imageContainer);
+      } else {
+        // Add default icon when no photo is available
+        const defaultIcon = document.createElement("i");
+        defaultIcon.className = "fas fa-image event-default-icon";
+        imageContainer.appendChild(defaultIcon);
       }
+
+      card.appendChild(imageContainer);
 
       // Create content container
       const content = document.createElement("div");
