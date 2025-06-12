@@ -151,6 +151,29 @@ h1 {
     margin: 0;
     font-size: 1.6em;
     color: #4a9b9d; /* Soft teal for event titles */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.event-content h2::after {
+    content: '\f061'; /* Font Awesome arrow icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.8em;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.event-content h2:hover {
+    color: #5ce4e7; /* Lighter teal on hover */
+    transform: translateX(5px);
+}
+
+.event-content h2:hover::after {
+    opacity: 1;
 }
 
 .event-content p {
@@ -160,8 +183,24 @@ h1 {
 }
 
 .event-content a {
-    color: inherit; /* Inherit color from parent */
+    color: inherit;
     text-decoration: none;
+    position: relative;
+}
+
+.event-content a::before {
+    content: '點擊查看詳情'; /* "Click for details" in Chinese */
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    font-size: 0.8em;
+    color: #808080;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.event-content a:hover::before {
+    opacity: 1;
 }
 
 @media (max-width: 600px) {
