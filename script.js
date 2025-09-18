@@ -613,7 +613,7 @@ async function loadSavedActivitiesFromBackend() {
 
   try {
     const response = await fetch(
-      "http://localhost:10000/api/activities/saved",
+      "https://xplore-hk-backend.onrender.com/api/activities/saved",
       {
         method: "GET",
         headers: {
@@ -762,7 +762,7 @@ async function toggleSavedActivity(activity) {
   const activityId = activity.id; // Use unique ID from Column N
 
   try {
-    const response = await fetch("http://localhost:10000/api/activities/save", {
+    const response = await fetch("https://xplore-hk-backend.onrender.com/api/activities/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -807,7 +807,7 @@ async function getSavedActivities() {
 
   try {
     const response = await fetch(
-      "http://localhost:10000/api/activities/saved",
+      "https://xplore-hk-backend.onrender.com/api/activities/saved",
       {
         method: "GET",
         headers: {

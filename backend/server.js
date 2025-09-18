@@ -4,10 +4,20 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
+const path = require("path");
 
 const app = express();
-app.use(cors());
+// Configure CORS to allow requests from any origin in development and production
+app.use(cors({
+  origin: true, // Allow all origins
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+
+// Serve static files from the parent directory (frontend files)
+app.use(express.static(path.join(__dirname, '..')));
 
 // MongoDB connection with retry logic
 const connectWithRetry = async () => {
