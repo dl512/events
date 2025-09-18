@@ -775,22 +775,31 @@ async function toggleSavedActivity(activity) {
     );
 
     if (response.ok) {
-      const data = await response.json();
+      try {
+        const data = await response.json();
 
-      // Update local savedActivities set based on backend response
-      if (data.saved) {
-        savedActivities.add(activityId);
-      } else {
-        savedActivities.delete(activityId);
+        // Update local savedActivities set based on backend response
+        if (data.saved) {
+          savedActivities.add(activityId);
+        } else {
+          savedActivities.delete(activityId);
+        }
+
+        // Update UI - only update what's necessary
+        try {
+          if (currentTab === "saved") {
+            await displaySavedActivities();
+          }
+          // Update profile stats if on profile tab
+          updateProfileView();
+        } catch (uiError) {
+          console.error("UI update error:", uiError);
+          // Don't show alert for UI errors, heart state is already updated
+        }
+      } catch (jsonError) {
+        console.error("JSON parsing error:", jsonError);
+        alert("Response parsing error. Please try again.");
       }
-
-      // Update UI - don't re-render all data, just update what's needed
-      if (currentTab === "saved") {
-        await displaySavedActivities();
-      }
-
-      // Update profile stats if on profile tab
-      updateProfileView();
     } else {
       const errorText = await response.text();
       alert("Failed to save activity: " + errorText);
