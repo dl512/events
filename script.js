@@ -762,14 +762,17 @@ async function toggleSavedActivity(activity) {
   const activityId = activity.id; // Use unique ID from Column N
 
   try {
-    const response = await fetch("https://xplore-hk-backend.onrender.com/api/activities/save", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ activityId: activityId }),
-    });
+    const response = await fetch(
+      "https://xplore-hk-backend.onrender.com/api/activities/save",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ activityId: activityId }),
+      }
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -795,7 +798,8 @@ async function toggleSavedActivity(activity) {
     }
   } catch (error) {
     console.error("Error toggling saved activity:", error);
-    alert("Network error. Please try again.");
+    console.error("Full error details:", error.message, error.stack);
+    alert("Network error: " + error.message + ". Please try again.");
   }
 }
 
