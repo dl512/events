@@ -5,6 +5,11 @@ let currentArea = "all"; // Default area filter
 let areas = new Set(); // To store unique areas
 let combinedData = []; // To store combined events and exhibitions data
 
+// Authentication and saved activities state
+let currentUser = null;
+let savedActivities = new Set(); // Store saved activity IDs
+let isSignUpMode = false;
+
 async function fetchGoogleSheet(sheetName) {
   const sheetLink = `https://sheets.googleapis.com/v4/spreadsheets/1G_8RMWjf0T9sNdMxKYy_Fc051I6zhdLLy6ehLak4CX4/values/${sheetName}/?key=AIzaSyCPyerGljBK4JJ-XA3aRr5cRvWssI3rwhI`;
 
@@ -112,6 +117,27 @@ function displayData(data) {
     const card = document.createElement("div");
     card.className = "event-card";
 
+    // Add heart button (only show if user is signed in)
+    if (currentUser && item.id) {
+      const heartBtn = document.createElement("button");
+      heartBtn.className = `heart-btn ${
+        savedActivities.has(item.id) ? "saved" : ""
+      }`;
+      heartBtn.innerHTML = `<i class="fas fa-heart"></i>`;
+      heartBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await toggleSavedActivity(item);
+        // Update heart button state based on current saved status
+        if (savedActivities.has(item.id)) {
+          heartBtn.classList.add("saved");
+        } else {
+          heartBtn.classList.remove("saved");
+        }
+      });
+      card.appendChild(heartBtn);
+    }
+
     // Create image container
     const imageContainer = document.createElement("div");
     imageContainer.className = "event-image-container";
@@ -157,29 +183,27 @@ function displayData(data) {
     const content = document.createElement("div");
     content.className = "event-content";
 
-    // Create link
-    const eventLink = document.createElement("a");
-    eventLink.href = eventData.url;
-    eventLink.target = "_blank";
-    eventLink.style.textDecoration = "none";
-
-    // Add title
+    // Add title with link (only title is clickable)
     const title = document.createElement("h2");
-    title.textContent = eventData.title;
-    eventLink.appendChild(title);
+    const titleLink = document.createElement("a");
+    titleLink.href = eventData.url;
+    titleLink.target = "_blank";
+    titleLink.style.textDecoration = "none";
+    titleLink.textContent = eventData.title;
+    title.appendChild(titleLink);
+    content.appendChild(title);
 
-    // Add date
+    // Add date (not clickable)
     const date = document.createElement("p");
     date.innerHTML = `<i class="fas fa-calendar-alt"></i> ${eventData.date}`;
-    eventLink.appendChild(date);
+    content.appendChild(date);
 
-    // Add venue
+    // Add venue (not clickable)
     const venue = document.createElement("p");
     venue.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${eventData.venue}`;
-    eventLink.appendChild(venue);
+    content.appendChild(venue);
 
     // Assemble the card
-    content.appendChild(eventLink);
     card.appendChild(content);
     eventList.appendChild(card);
   }
@@ -337,13 +361,15 @@ async function loadData() {
     if (eventsData && eventsData.length > 1) {
       for (let i = 1; i < eventsData.length; i++) {
         const row = eventsData[i];
-        if (row.length >= 13 && row[0].trim() === "Y") {
+        if (row.length >= 14 && row[0].trim() === "Y") {
           const eventDateStr = row[6] ? row[6].trim() : "";
           const eventDates = parseDates(eventDateStr);
           const eventCategories = row[3].split(",").map((cat) => cat.trim());
           const eventAreas = row[12].split(",").map((area) => area.trim());
+          const uniqueId = row[13] ? row[13].trim() : null; // Column N - unique ID
 
           processedEvents.push({
+            id: uniqueId,
             title: row[2],
             dateStr: eventDateStr,
             dates: eventDates,
@@ -363,14 +389,16 @@ async function loadData() {
     if (exhibitionsData && exhibitionsData.length > 1) {
       for (let i = 1; i < exhibitionsData.length; i++) {
         const row = exhibitionsData[i];
-        if (row.length >= 13 && row[0].trim() === "Y") {
+        if (row.length >= 14 && row[0].trim() === "Y") {
           const exhibitionDateStr = row[6] ? row[6].trim() : "";
           const exhibitionDates = parseExhibitionDates(exhibitionDateStr);
           const exhibitionAreas = row[12]
             ? row[12].split(",").map((area) => area.trim())
             : [];
+          const uniqueId = row[13] ? row[13].trim() : null; // Column N - unique ID
 
           processedExhibitions.push({
+            id: uniqueId,
             title: row[2],
             dateStr: exhibitionDateStr,
             dates: exhibitionDates, // Now exhibitions have proper date availability
@@ -521,7 +549,12 @@ async function main() {
   // Generate all filter buttons first
   generateAllFilterButtons();
 
-  // Then load data
+  // Load saved activities first (if user is signed in)
+  if (currentUser) {
+    await loadSavedActivitiesFromBackend();
+  }
+
+  // Then load data (hearts will now show correct state)
   await loadData();
 }
 
@@ -555,5 +588,356 @@ function processEventData(data) {
   }));
 }
 
-// Run main function
-main();
+// Authentication Functions
+async function initializeAuth() {
+  // Check if user is already signed in (from localStorage)
+  const savedUser = localStorage.getItem("currentUser");
+  const token = localStorage.getItem("authToken");
+
+  if (!savedUser || !token) {
+    // Redirect to sign-in page if not authenticated
+    window.location.href = "signin.html";
+    return;
+  }
+
+  currentUser = JSON.parse(savedUser);
+  updateAuthUI();
+
+  // Setup event listeners
+  setupEventListeners();
+}
+
+async function loadSavedActivitiesFromBackend() {
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
+
+  try {
+    const response = await fetch(
+      "http://localhost:10000/api/activities/saved",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      // Update local savedActivities set
+      savedActivities.clear();
+      data.savedActivities.forEach((id) => savedActivities.add(id));
+
+      // Update heart button states if data is already displayed
+      updateHeartButtonStates();
+    } else {
+      console.error("Failed to load saved activities");
+    }
+  } catch (error) {
+    console.error("Error loading saved activities:", error);
+  }
+}
+
+// Function to update heart button states based on savedActivities
+function updateHeartButtonStates() {
+  const heartButtons = document.querySelectorAll(".heart-btn");
+  heartButtons.forEach((button) => {
+    // Get the activity ID from the button's click handler context
+    // We need to find the activity ID from the button's parent card
+    const card = button.closest(".event-card");
+    if (card) {
+      // Find the activity ID by looking for the title link
+      const titleLink = card.querySelector("h2 a");
+      if (titleLink) {
+        // We need to match this with our combinedData
+        const title = titleLink.textContent;
+        const activity = combinedData.find((item) => item.title === title);
+        if (activity && activity.id) {
+          if (savedActivities.has(activity.id)) {
+            button.classList.add("saved");
+          } else {
+            button.classList.remove("saved");
+          }
+        }
+      }
+    }
+  });
+}
+
+// Add event listeners for auth and navigation
+function setupEventListeners() {
+  // Add event listeners
+  document.getElementById("signOutBtn")?.addEventListener("click", signOut);
+
+  // Bottom navigation
+  document
+    .getElementById("discoverTab")
+    ?.addEventListener("click", () => switchTab("discover"));
+  document
+    .getElementById("savedTab")
+    ?.addEventListener("click", () => switchTab("saved"));
+  document
+    .getElementById("profileTab")
+    ?.addEventListener("click", () => switchTab("profile"));
+  document
+    .getElementById("exploreFromEmpty")
+    ?.addEventListener("click", () => switchTab("discover"));
+}
+
+// Tab switching functionality
+async function switchTab(tab) {
+  const discoverContent = document.getElementById("discoverContent");
+  const savedContent = document.getElementById("savedContent");
+  const profileContent = document.getElementById("profileContent");
+  const discoverTab = document.getElementById("discoverTab");
+  const savedTab = document.getElementById("savedTab");
+  const profileTab = document.getElementById("profileTab");
+  const filtersSection = document.querySelector(".filters-section");
+
+  // Hide all content views
+  discoverContent.style.display = "none";
+  savedContent.style.display = "none";
+  profileContent.style.display = "none";
+
+  // Remove active class from all tabs
+  discoverTab.classList.remove("active");
+  savedTab.classList.remove("active");
+  profileTab.classList.remove("active");
+
+  // Show selected content and activate tab
+  if (tab === "discover") {
+    discoverContent.style.display = "block";
+    discoverTab.classList.add("active");
+    filtersSection.style.display = "block";
+  } else if (tab === "saved") {
+    savedContent.style.display = "block";
+    savedTab.classList.add("active");
+    filtersSection.style.display = "none";
+    await displaySavedActivities();
+  } else if (tab === "profile") {
+    profileContent.style.display = "block";
+    profileTab.classList.add("active");
+    filtersSection.style.display = "none";
+    updateProfileView();
+  }
+}
+
+function signOut() {
+  currentUser = null;
+  savedActivities.clear();
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("savedActivities");
+  localStorage.removeItem("savedActivitiesData");
+  window.location.href = "signin.html";
+}
+
+function updateAuthUI() {
+  // Update profile view with user info
+  updateProfileView();
+}
+
+function updateProfileView() {
+  const profileUserName = document.getElementById("profileUserName");
+  const savedCount = document.getElementById("savedCount");
+
+  if (currentUser && profileUserName) {
+    profileUserName.textContent = currentUser.name || currentUser.userId;
+  }
+
+  if (savedCount) {
+    savedCount.textContent = savedActivities.size;
+  }
+}
+
+// Saved Activities Functions
+async function toggleSavedActivity(activity) {
+  if (!currentUser || !activity.id) return;
+
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    alert("Please sign in to save activities");
+    return;
+  }
+
+  const activityId = activity.id; // Use unique ID from Column N
+
+  try {
+    const response = await fetch("http://localhost:10000/api/activities/save", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ activityId: activityId }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Update local savedActivities set based on backend response
+      if (data.saved) {
+        savedActivities.add(activityId);
+      } else {
+        savedActivities.delete(activityId);
+      }
+
+      // Update UI
+      displayData(combinedData);
+      if (currentTab === "saved") {
+        await displaySavedActivities();
+      }
+
+      // Update profile stats if on profile tab
+      updateProfileView();
+    } else {
+      const errorText = await response.text();
+      alert("Failed to save activity: " + errorText);
+    }
+  } catch (error) {
+    console.error("Error toggling saved activity:", error);
+    alert("Network error. Please try again.");
+  }
+}
+
+async function getSavedActivities() {
+  if (!currentUser) return [];
+
+  const token = localStorage.getItem("authToken");
+  if (!token) return [];
+
+  try {
+    const response = await fetch(
+      "http://localhost:10000/api/activities/saved",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Update local savedActivities set
+      savedActivities.clear();
+      data.savedActivities.forEach((id) => savedActivities.add(id));
+
+      // Filter combinedData to get full activity objects
+      const filtered = combinedData.filter(
+        (activity) => activity.id && data.savedActivities.includes(activity.id)
+      );
+
+      return filtered;
+    } else {
+      console.error("Failed to fetch saved activities");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching saved activities:", error);
+    return [];
+  }
+}
+
+async function displaySavedActivities() {
+  const savedEventList = document.getElementById("savedEventList");
+  const emptyState = document.getElementById("emptyState");
+  const savedData = await getSavedActivities();
+
+  if (savedData.length === 0) {
+    savedEventList.style.display = "none";
+    emptyState.style.display = "block";
+    return;
+  }
+
+  savedEventList.style.display = "block";
+  emptyState.style.display = "none";
+  savedEventList.innerHTML = "";
+
+  savedData.forEach((activity) => {
+    if (!activity) return;
+
+    const card = document.createElement("div");
+    card.className = "event-card";
+
+    // Add heart button (always saved on this page)
+    if (activity.id) {
+      const heartBtn = document.createElement("button");
+      heartBtn.className = "heart-btn saved";
+      heartBtn.innerHTML = `<i class="fas fa-heart"></i>`;
+      heartBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await toggleSavedActivity(activity);
+        // Remove card from display
+        card.remove();
+        // Check if no more saved activities
+        const remainingSaved = await getSavedActivities();
+        if (remainingSaved.length === 0) {
+          await displaySavedActivities();
+        }
+      });
+      card.appendChild(heartBtn);
+    }
+
+    // Create image container
+    const imageContainer = document.createElement("div");
+    imageContainer.className = "event-image-container";
+
+    if (activity.photo) {
+      const image = document.createElement("img");
+      image.className = "event-image";
+      image.alt = activity.title;
+      image.src = activity.photo;
+      image.onerror = function () {
+        image.style.display = "none";
+        const defaultIcon = document.createElement("i");
+        defaultIcon.className = "fas fa-image event-default-icon";
+        imageContainer.appendChild(defaultIcon);
+      };
+      imageContainer.appendChild(image);
+    } else {
+      const defaultIcon = document.createElement("i");
+      defaultIcon.className = "fas fa-image event-default-icon";
+      imageContainer.appendChild(defaultIcon);
+    }
+
+    card.appendChild(imageContainer);
+
+    // Create content container
+    const content = document.createElement("div");
+    content.className = "event-content";
+
+    // Create link
+    const eventLink = document.createElement("a");
+    eventLink.href = activity.url;
+    eventLink.target = "_blank";
+    eventLink.style.textDecoration = "none";
+
+    // Add title
+    const title = document.createElement("h2");
+    title.textContent = activity.title;
+    eventLink.appendChild(title);
+
+    // Add date
+    const date = document.createElement("p");
+    date.innerHTML = `<i class="fas fa-calendar-alt"></i> ${activity.dateStr}`;
+    eventLink.appendChild(date);
+
+    // Add venue
+    const venue = document.createElement("p");
+    venue.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${activity.venue}`;
+    eventLink.appendChild(venue);
+
+    content.appendChild(eventLink);
+    card.appendChild(content);
+    savedEventList.appendChild(card);
+  });
+}
+
+// Initialize everything
+document.addEventListener("DOMContentLoaded", async function () {
+  await initializeAuth();
+  // Run main function after auth is initialized
+  await main();
+});

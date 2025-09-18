@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In - XPLORE Hong Kong</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+
+  <body class="auth-body">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1 class="auth-logo">XPLORE Hong Kong</h1>
+          <p class="auth-subtitle">Discover amazing activities in Hong Kong</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="signinTab">Sign In</button>
+          <button class="auth-tab" id="signupTab">Sign Up</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <form id="signinForm" class="auth-form">
+          <div class="form-group">
+            <label for="signinUserId">User ID</label>
+            <input type="text" id="signinUserId" name="userid" placeholder="Enter your user ID" required>
+          </div>
+          <div class="form-group">
+            <label for="signinPassword">Password</label>
+            <input type="password" id="signinPassword" name="password" placeholder="Enter your password" required>
+          </div>
+          <button type="submit" class="auth-submit">Sign In</button>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="signupForm" class="auth-form" style="display: none;">
+          <div class="form-group">
+            <label for="signupUserId">User ID</label>
+            <input type="text" id="signupUserId" name="userid" placeholder="Choose a user ID" required>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" name="password" placeholder="Create a password" required>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+          </div>
+          <button type="submit" class="auth-submit">Sign Up</button>
+        </form>
+
+        <div class="auth-footer">
+          <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let isSignUpMode = false;
+
+      // Tab switching
+      document.getElementById('signinTab').addEventListener('click', () => switchTab(false));
+      document.getElementById('signupTab').addEventListener('click', () => switchTab(true));
+
+      function switchTab(signUp) {
+        isSignUpMode = signUp;
+        const signinTab = document.getElementById('signinTab');
+        const signupTab = document.getElementById('signupTab');
+        const signinForm = document.getElementById('signinForm');
+        const signupForm = document.getElementById('signupForm');
+
+        if (signUp) {
+          signinTab.classList.remove('active');
+          signupTab.classList.add('active');
+          signinForm.style.display = 'none';
+          signupForm.style.display = 'block';
+        } else {
+          signupTab.classList.remove('active');
+          signinTab.classList.add('active');
+          signupForm.style.display = 'none';
+          signinForm.style.display = 'block';
+        }
+      }
+
+      // Form handling
+      document.getElementById('signinForm').addEventListener('submit', handleSignIn);
+      document.getElementById('signupForm').addEventListener('submit', handleSignUp);
+
+      async function handleSignIn(e) {
+        e.preventDefault();
+        const userId = document.getElementById('signinUserId').value;
+        const password = document.getElementById('signinPassword').value;
+
+        try {
+          const response = await fetch('http://localhost:10000/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, password })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            window.location.href = 'index.html';
+          } else {
+            const errorText = await response.text();
+            alert('Sign in failed: ' + errorText);
+          }
+        } catch (error) {
+          alert('Network error: ' + error.message);
+        }
+      }
+
+      async function handleSignUp(e) {
+        e.preventDefault();
+        const userId = document.getElementById('signupUserId').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:10000/api/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, password })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            window.location.href = 'index.html';
+          } else {
+            const errorText = await response.text();
+            alert('Sign up failed: ' + errorText);
+          }
+        } catch (error) {
+          alert('Network error: ' + error.message);
+        }
+      }
+
+      // Check if already signed in
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          window.location.href = 'index.html';
+        }
+      });
+    </script>
+  </body>
+</html>

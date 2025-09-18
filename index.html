@@ -27,8 +27,13 @@
     gtag("config", "G-9XN8N66SKM");
   </script>
 
-  <body>
-    <h1>XPLORE Hong Kong</h1>
+  <body class="main-content-with-nav">
+    <!-- Navigation Header -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <h1 class="nav-title">XPLORE Hong Kong</h1>
+      </div>
+    </nav>
 
 
     <div class="filters-section">
@@ -43,9 +48,72 @@
       </div>
     </div>
 
-    <div id="eventList">
-      <!-- Events will be populated here -->
+    <!-- Main Content -->
+    <div id="discoverContent" class="content-view">
+      <div id="eventList">
+        <!-- Events will be populated here -->
+      </div>
     </div>
+
+    <!-- Saved Content -->
+    <div id="savedContent" class="content-view" style="display: none;">
+      <div id="savedEventList">
+        <!-- Saved events will be populated here -->
+      </div>
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fas fa-heart empty-heart"></i>
+        <h2>No saved activities yet</h2>
+        <p>Start exploring and save activities you're interested in!</p>
+        <button class="explore-btn" id="exploreFromEmpty">
+          Explore Activities
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div id="profileContent" class="content-view" style="display: none;">
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <h2 id="profileUserName" class="profile-name">User</h2>
+        </div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-number" id="savedCount">0</div>
+            <div class="stat-label">Saved Activities</div>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="signOutBtn" class="sign-out-button">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="discoverTab">
+          <i class="fas fa-compass"></i>
+          <span>Discover</span>
+        </button>
+        <button class="nav-tab" id="savedTab">
+          <i class="fas fa-heart"></i>
+          <span>Saved</span>
+        </button>
+        <button class="nav-tab" id="profileTab">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </button>
+      </div>
+    </nav>
 
     <script src="script.js"></script>
   </body>
