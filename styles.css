@@ -175,7 +175,7 @@ h1 {
 
 .event-card {
     width: 100%;
-    max-width: 800px;
+    max-width: 780px; /* Account for container padding (800px - 20px) */
     margin: 0 auto 16px auto; /* Center the cards */
     display: flex;
     flex-direction: row-reverse;
@@ -347,13 +347,19 @@ h1 {
     }
     
     .event-card {
-        margin: 0 0 12px 0; /* Remove side margins since parent has them */
+        width: 100%; /* Full width on mobile since parent has margins */
+        max-width: none; /* Remove max-width restriction on mobile */
+        margin: 0 0 12px 0;
         padding: 16px;
         border-radius: 10px;
     }
 
     /* Mobile saved content */
     #savedContent {
+        /* Let it inherit from content-view */
+    }
+    
+    #savedEventList {
         margin: 0 10px;
         padding: 0;
     }
@@ -538,9 +544,7 @@ h1 {
 
 /* Ensure saved content matches main content layout */
 #savedContent {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 10px;
+    /* Remove custom styling - let it inherit from content-view */
 }
 
 #savedEventList {
@@ -548,6 +552,9 @@ h1 {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 10px; /* Same as #eventList */
 }
 
 .empty-state {
