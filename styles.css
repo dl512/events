@@ -1,81 +1,59 @@
-/* Dark Mode Styles */
+/* Clean White Theme - Fitness App Style */
 body {
-    font-family: 'Georgia', serif; /* Elegant serif font */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #121212; /* Dark background */
-    color: #e0e0e0; /* Light gray text */
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    line-height: 1.6;
 }
 
 h1 {
     text-align: center;
-    color: #e0e0e0; /* Light gray for headings */
-    margin-bottom: 30px;
-    font-size: 2em; /* Larger title */
-}
-
-.toggle-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0 30px 0; /* Adjust margin to create space below toggle buttons */
-    gap: 40px;
-}
-
-.toggle-button {
-    padding: 12px 30px;
-    border: none;
-    background-color: #121212; /* Dark black background */
-    color: #808080; /* Grey text for unselected */
-    cursor: pointer;
-    font-size: 1.2em;
-    transition: all 0.3s ease;
-    position: relative; /* For underline positioning */
-    font-weight: 500;
-}
-
-/* Remove previous hover styles */
-.toggle-button:hover {
-    color: #a0a0a0; /* Slightly lighter grey on hover */
-}
-
-.toggle-button.active {
-    background-color: #121212; /* Keep black background */
-    color: #ffffff; /* White text for active state */
+    color: #0f172a;
+    margin-bottom: 20px;
+    font-size: 1.5em;
     font-weight: 600;
+    letter-spacing: -0.2px;
 }
 
-/* Add underline for active state */
-.toggle-button.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #ffffff;
-    transform: scaleX(1);
-    transition: transform 0.3s ease;
+/* Clean Filter Section - No Box */
+.filters-section {
+    max-width: 800px;
+    margin: 0 auto 25px auto;
+    padding: 0 10px;
 }
 
-/* Remove previous box-shadow styles */
-.toggle-button, 
-.toggle-button:hover, 
-.toggle-button.active, 
-.toggle-button.active:hover {
-    box-shadow: none;
+.filter-row {
+    display: flex;
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 8px;
+    margin-bottom: 12px;
+    /* Enable horizontal scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-/* Remove the old switch styles */
-.switch, .slider, .switch input {
-    display: none;
+.filter-row:last-child {
+    margin-bottom: 0;
 }
 
-#toggleLabel {
-    margin-left: 10px;
-    font-size: 1.1em;
-    color: #4a9b9d; /* Soft teal for label */
+.filter-row::-webkit-scrollbar {
+    height: 4px;
 }
+
+.filter-row::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 2px;
+}
+
+.filter-row::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
 
 #eventList {
     display: flex;
@@ -89,39 +67,47 @@ h1 {
 .event-card {
     width: 100%;
     max-width: 800px;
-    margin: 0 0 20px 0;
+    margin: 0 0 16px 0;
     display: flex;
-    gap: 20px;
-    background-color: #1e1e1e;
+    flex-direction: row-reverse;
+    gap: 16px;
+    background-color: #ffffff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.event-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
 }
 
 .event-image-container {
-    width: 200px;
-    height: 250px; /* Changed from 200px to maintain 4:5 ratio */
+    width: 80px;
+    height: 80px;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #2a2a2a;
-    border-radius: 4px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
 }
 
 .event-default-icon {
-    font-size: 4em;
-    color: #4a9b9d;
-    opacity: 0.7;
+    font-size: 1.5em;
+    color: #9ca3af;
+    opacity: 0.5;
 }
 
 .event-image-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .event-image-container a {
@@ -133,13 +119,14 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1e1e1e;
-    color: #4a9b9d;
+    background-color: #f8fafc;
+    color: #3b82f6;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 0.875em;
     text-align: center;
-    padding: 10px;
-    border-radius: 4px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
 }
 
 .event-content {
@@ -148,38 +135,27 @@ h1 {
 }
 
 .event-content h2 {
-    margin: 0;
-    font-size: 1.6em;
-    color: #4a9b9d; /* Soft teal for event titles */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.event-content h2::after {
-    content: '\f061'; /* Font Awesome arrow icon */
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    font-size: 0.8em;
-    opacity: 0;
-    transition: all 0.3s ease;
+    margin: 0 0 8px 0;
+    font-size: 1.1em;
+    color: #111827;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: all 0.2s ease;
 }
 
 .event-content h2:hover {
-    color: #5ce4e7; /* Lighter teal on hover */
-    transform: translateX(5px);
-}
-
-.event-content h2:hover::after {
-    opacity: 1;
+    color: #374151;
 }
 
 .event-content p {
-    margin: 8px 0;
-    color: #e0e0e0; /* Light gray for text */
-    font-size: 0.95em;
+    margin: 4px 0;
+    color: #6b7280;
+    font-size: 0.875em;
+    line-height: 1.4;
+}
+
+.event-content p:first-of-type {
+    margin-top: 0;
 }
 
 .event-content a {
@@ -203,17 +179,13 @@ h1 {
     }
 
     .event-card {
-        flex-direction: column;
+        flex-direction: row-reverse;
+        padding: 16px;
     }
 
     .event-image-container {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 4/5; /* Added to maintain 4:5 ratio on mobile */
-    }
-    
-    .event-image-container a {
-        aspect-ratio: 4/5; /* Added to maintain 4:5 ratio for the link on mobile */
+        width: 60px;
+        height: 60px;
     }
 
     /* Add these new styles for area filters */
@@ -233,104 +205,77 @@ h1 {
         flex: 0 1 auto;
         white-space: nowrap;
     }
+
+    /* Mobile styles for filter section */
+    .filters-section {
+        margin: 0 10px 20px 10px;
+        padding: 0;
+    }
+
+    /* Mobile styles for filter buttons */
+    .filter-row {
+        gap: 6px;
+        margin-bottom: 10px;
+        /* Hide scrollbars on mobile */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+    }
+
+    .filter-row::-webkit-scrollbar {
+        display: none; /* WebKit */
+    }
+
+    .filter-btn {
+        padding: 8px 14px;
+        font-size: 0.8em;
+        border-radius: 10px;
+    }
+
+    /* Mobile event cards */
+    .event-card {
+        margin: 0 10px 12px 10px;
+        padding: 16px;
+        border-radius: 10px;
+    }
 }
 
-.filter-buttons {
-    display: flex;
-    justify-content: center;
-    margin: 0 0 30px 0; /* Adjust margin to create space below filter buttons */
-}
 
-.filter-buttons button {
-    padding: 10px 20px;
-    margin: 0 10px;
-    border: none;
-    border-radius: 6px;
-    background-color: #2a2a2a;
-    color: #ffffff;
+/* Unified Filter Button Styles */
+.filter-btn {
+    padding: 10px 16px;
+    margin: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    color: #475569;
     cursor: pointer;
-    font-size: 1em;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 0.875em;
+    transition: all 0.2s ease;
     font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.filter-buttons button:hover {
-    background-color: #3a3a3a;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+/* Hover States */
+.filter-btn:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.filter-buttons button.active {
-    background-color: #4ad3d6;
-    color: #121212;
+/* Active States */
+.filter-btn.active {
+    background-color: #374151;
+    color: #ffffff;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(74, 211, 214, 0.3);
+    border-color: #374151;
+    box-shadow: 0 2px 8px rgba(55, 65, 81, 0.25);
 }
 
-.filter-buttons button.active:hover {
-    background-color: #5ce4e7;
-    box-shadow: 0 4px 12px rgba(74, 211, 214, 0.4);
-}
-
-.category-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 0 0 30px 0; /* Adjust margin to create space below category filter */
-    padding: 0 20px;
-}
-
-.category-button {
-    padding: 8px 16px;
-    border: 1px solid #808080;
-    border-radius: 20px;
-    background-color: transparent;
-    color: #808080;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: all 0.3s ease;
-}
-
-.category-button:hover {
-    border-color: #a0a0a0;
-    color: #a0a0a0;
-}
-
-.category-button.active {
-    border-color: #ffffff;
-    color: #ffffff;
-    background-color: #2a2a2a;
-}
-
-.area-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 0 0 30px 0;
-    padding: 0 20px;
-}
-
-.area-button {
-    padding: 8px 16px;
-    border: 1px solid #808080;
-    border-radius: 20px;
-    background-color: transparent;
-    color: #808080;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: all 0.3s ease;
-}
-
-.area-button:hover {
-    border-color: #a0a0a0;
-    color: #a0a0a0;
-}
-
-.area-button.active {
-    border-color: #ffffff;
-    color: #ffffff;
-    background-color: #2a2a2a;
+.filter-btn.active:hover {
+    background-color: #1f2937;
+    border-color: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(55, 65, 81, 0.3);
 }

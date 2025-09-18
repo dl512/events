@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event and Exhibition List</title>
+    <title>XPLORE Hong Kong</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
     <link
       rel="stylesheet"
@@ -27,28 +28,19 @@
   </script>
 
   <body>
-    <h1>XPLORE Hong Kong 香港活動搜尋器</h1>
+    <h1>XPLORE Hong Kong</h1>
 
-    <div class="toggle-container">
-      <button id="eventsButton" class="toggle-button active">搵活動</button>
-      <button id="exhibitionsButton" class="toggle-button">睇展覽</button>
-    </div>
 
-    <div id="filterButtonsContainer" class="filter-buttons">
-      <button id="todayButton">今日</button>
-      <button id="weekendButton">今個Weekend</button>
-      <button id="allButton">全部</button>
-    </div>
-
-    <div id="categoryFilterContainer" class="category-filter">
-      <button id="allCategoriesButton" class="category-button active">全部</button>
-      <!-- Other category buttons will be added dynamically -->
-    </div>
-
-    <!-- Add new area filter container -->
-    <div id="areaFilterContainer" class="area-filter">
-      <button id="allAreasButton" class="area-button active">全部地區</button>
-      <!-- Other area buttons will be added dynamically -->
+    <div class="filters-section">
+      <div id="dateFiltersContainer" class="filter-row">
+        <!-- Date filter buttons will be generated dynamically -->
+      </div>
+      <div id="categoryFiltersContainer" class="filter-row">
+        <!-- Category filter buttons will be generated dynamically -->
+      </div>
+      <div id="areaFiltersContainer" class="filter-row">
+        <!-- Area filter buttons will be generated dynamically -->
+      </div>
     </div>
 
     <div id="eventList">
