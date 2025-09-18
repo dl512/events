@@ -784,8 +784,7 @@ async function toggleSavedActivity(activity) {
         savedActivities.delete(activityId);
       }
 
-      // Update UI
-      displayData(combinedData);
+      // Update UI - don't re-render all data, just update what's needed
       if (currentTab === "saved") {
         await displaySavedActivities();
       }
