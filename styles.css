@@ -515,7 +515,7 @@ h1 {
 .heart-btn i {
     font-size: 1.2em;
     color: #9ca3af; /* Lighter grey for unliked state */
-    transition: all 0.3s ease;
+    transition: transform 0.2s ease; /* Only animate transform, not color */
 }
 
 .heart-btn:hover i {
@@ -523,11 +523,12 @@ h1 {
 }
 
 .heart-btn.saved i {
-    color: #ef4444; /* Bright red when saved */
+    color: #ef4444 !important; /* Bright red when saved - instant change */
+    transition: none; /* No transition for saved state */
 }
 
 .heart-btn.saved:hover i {
-    color: #dc2626; /* Darker red on hover when saved */
+    color: #dc2626 !important; /* Darker red on hover when saved */
 }
 
 /* Update event card to be relative for heart button positioning */
@@ -898,7 +899,7 @@ nav.bottom-nav {
 }
 
 .nav-tab span {
-    font-size: 0.75em;
+    font-size: 0.85em; /* Larger text */
     font-weight: 500;
 }
 
