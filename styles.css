@@ -174,8 +174,8 @@ h1 {
 }
 
 .event-card {
-    width: 100%;
-    max-width: 780px; /* Account for container padding (800px - 20px) */
+    width: calc(100% - 20px); /* Account for container padding */
+    max-width: 760px; /* 800px container - 20px padding - 20px margin */
     margin: 0 auto 16px auto; /* Center the cards */
     display: flex;
     flex-direction: row-reverse;
@@ -342,7 +342,7 @@ h1 {
 
     /* Mobile event list and cards */
     #eventList {
-        margin: 0 10px;
+        margin: 0 15px; /* Increase side margins */
         padding: 0;
     }
     
@@ -360,7 +360,7 @@ h1 {
     }
     
     #savedEventList {
-        margin: 0 10px;
+        margin: 0 15px; /* Same margins as eventList */
         padding: 0;
     }
 }
