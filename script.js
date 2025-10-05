@@ -594,10 +594,23 @@ async function initializeAuth() {
   const savedUser = localStorage.getItem("currentUser");
   const token = localStorage.getItem("authToken");
 
+  // Skip auth check for local development (when no backend is available)
+  const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
   if (!savedUser || !token) {
-    // Redirect to sign-in page if not authenticated
-    window.location.href = "signin.html";
-    return;
+    if (isLocalDev) {
+      // For local development, create a mock user
+      currentUser = { userId: 'demo-user', name: 'Demo User' };
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      localStorage.setItem('authToken', 'demo-token');
+      updateAuthUI();
+      setupEventListeners();
+      return;
+    } else {
+      // Redirect to sign-in page if not authenticated (production)
+      window.location.href = "signin.html";
+      return;
+    }
   }
 
   currentUser = JSON.parse(savedUser);
