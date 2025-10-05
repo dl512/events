@@ -109,6 +109,7 @@ function displayData(data) {
       title: item.title,
       date: item.dateStr,
       venue: item.venue,
+      cost: item.cost,
       url: item.url,
       photo: item.photo,
     };
@@ -202,6 +203,14 @@ function displayData(data) {
     const venue = document.createElement("p");
     venue.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${eventData.venue}`;
     content.appendChild(venue);
+
+    // Add cost if available (not clickable)
+    if (eventData.cost) {
+      const cost = document.createElement("p");
+      cost.innerHTML = `<i class="fas fa-dollar-sign"></i> ${eventData.cost}`;
+      cost.className = "event-cost";
+      content.appendChild(cost);
+    }
 
     // Assemble the card
     card.appendChild(content);
@@ -374,6 +383,7 @@ async function loadData() {
             dateStr: eventDateStr,
             dates: eventDates,
             venue: row[10],
+            cost: row[1] && row[1].trim() !== "" && row[1].trim().toUpperCase() !== "N/A" ? row[1].trim() : null, // Column B - cost
             url: row[5],
             photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
             categories: eventCategories,
@@ -403,6 +413,7 @@ async function loadData() {
             dateStr: exhibitionDateStr,
             dates: exhibitionDates, // Now exhibitions have proper date availability
             venue: row[10],
+            cost: row[1] && row[1].trim() !== "" && row[1].trim().toUpperCase() !== "N/A" ? row[1].trim() : null, // Column B - cost
             url: row[5],
             photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
             categories: [], // Exhibitions don't have categories except being exhibitions
@@ -953,6 +964,14 @@ async function displaySavedActivities() {
     const venue = document.createElement("p");
     venue.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${activity.venue}`;
     eventLink.appendChild(venue);
+
+    // Add cost if available
+    if (activity.cost) {
+      const cost = document.createElement("p");
+      cost.innerHTML = `<i class="fas fa-dollar-sign"></i> ${activity.cost}`;
+      cost.className = "event-cost";
+      eventLink.appendChild(cost);
+    }
 
     content.appendChild(eventLink);
     card.appendChild(content);

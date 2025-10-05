@@ -263,6 +263,11 @@ h1 {
     line-height: 1.4;
 }
 
+.event-cost {
+    color: #059669 !important; /* Green color for cost */
+    font-weight: 600 !important; /* Bold for cost */
+}
+
 .event-content p:first-of-type {
     margin-top: 0;
 }
