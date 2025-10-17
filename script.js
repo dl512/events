@@ -426,7 +426,13 @@ async function loadData() {
 
     // Combine and store the data
     combinedData = [...processedEvents, ...processedExhibitions];
-    displayData(combinedData);
+    
+    // Use applyAllFilters if available (handles search + filters), otherwise just display
+    if (typeof applyAllFilters === 'function') {
+      applyAllFilters();
+    } else {
+      displayData(combinedData);
+    }
   } catch (error) {
     console.error("Error loading data:", error);
   }
@@ -453,7 +459,7 @@ function generateDateFilterButtons() {
   allDateButton.addEventListener("click", () => {
     currentFilter = "all";
     generateAllFilterButtons();
-    loadData();
+    applyAllFilters();
   });
   container.appendChild(allDateButton);
 
@@ -479,7 +485,7 @@ function generateDateFilterButtons() {
     button.addEventListener("click", () => {
       currentFilter = dateString;
       generateAllFilterButtons();
-      loadData();
+      applyAllFilters();
     });
     container.appendChild(button);
   }
@@ -499,7 +505,7 @@ function generateCategoryFilterButtons() {
   allCategoryButton.addEventListener("click", () => {
     currentCategory = "all";
     generateAllFilterButtons();
-    loadData();
+    applyAllFilters();
   });
   container.appendChild(allCategoryButton);
 
@@ -515,7 +521,7 @@ function generateCategoryFilterButtons() {
     button.addEventListener("click", () => {
       currentCategory = category;
       generateAllFilterButtons();
-      loadData();
+      applyAllFilters();
     });
     container.appendChild(button);
   });
@@ -535,7 +541,7 @@ function generateAreaFilterButtons() {
   allAreaButton.addEventListener("click", () => {
     currentArea = "all";
     generateAllFilterButtons();
-    loadData();
+    applyAllFilters();
   });
   container.appendChild(allAreaButton);
 
@@ -549,7 +555,7 @@ function generateAreaFilterButtons() {
     button.addEventListener("click", () => {
       currentArea = area;
       generateAllFilterButtons();
-      loadData();
+      applyAllFilters();
     });
     container.appendChild(button);
   });
@@ -979,9 +985,135 @@ async function displaySavedActivities() {
   });
 }
 
+// Search functionality
+let searchTerm = "";
+
+function setupSearch() {
+  const searchInput = document.getElementById("searchInput");
+  const clearSearchBtn = document.getElementById("clearSearchBtn");
+
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", (e) => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    
+    // Show/hide clear button
+    if (searchTerm) {
+      clearSearchBtn.style.display = "flex";
+    } else {
+      clearSearchBtn.style.display = "none";
+    }
+    
+    // Apply search filter
+    applyAllFilters();
+  });
+
+  // Clear search button
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchTerm = "";
+      clearSearchBtn.style.display = "none";
+      applyAllFilters();
+    });
+  }
+}
+
+// Apply all filters including search
+function applyAllFilters() {
+  // Filter combined data based on current filters AND search term
+  let filteredData = combinedData;
+
+  // Apply search filter
+  if (searchTerm) {
+    filteredData = filteredData.filter((item) => {
+      const titleMatch = item.title.toLowerCase().includes(searchTerm);
+      const venueMatch = item.venue.toLowerCase().includes(searchTerm);
+      return titleMatch || venueMatch;
+    });
+  }
+
+  // Apply existing filters (date, category, area)
+  filteredData = filteredData.filter((item) => {
+    // Date filter
+    if (currentFilter !== "all") {
+      if (!item.dates || !item.dates.includes(currentFilter)) {
+        return false;
+      }
+    }
+
+    // Category filter
+    if (currentCategory !== "all") {
+      if (currentCategory === "展覽") {
+        if (!item.isExhibition) return false;
+      } else {
+        if (item.isExhibition || !item.categories || !item.categories.includes(currentCategory)) {
+          return false;
+        }
+      }
+    }
+
+    // Area filter
+    if (currentArea !== "all") {
+      if (!item.areas || !item.areas.includes(currentArea)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  displayData(filteredData);
+}
+
+// Reload data from Google Sheets
+async function reloadData() {
+  const reloadBtn = document.getElementById("reloadBtn");
+  
+  if (!reloadBtn) return;
+  
+  // Add loading state
+  reloadBtn.classList.add("loading");
+  reloadBtn.disabled = true;
+  
+  try {
+    console.log("Reloading data from Google Sheets...");
+    
+    // Re-fetch data from Google Sheets
+    await loadData();
+    
+    // Re-apply current filters
+    applyAllFilters();
+    
+    console.log("Data reloaded successfully");
+  } catch (error) {
+    console.error("Error reloading data:", error);
+    alert("Failed to reload data. Please try again.");
+  } finally {
+    // Remove loading state
+    setTimeout(() => {
+      reloadBtn.classList.remove("loading");
+      reloadBtn.disabled = false;
+    }, 500);
+  }
+}
+
+// Setup reload button
+function setupReload() {
+  const reloadBtn = document.getElementById("reloadBtn");
+  
+  if (!reloadBtn) return;
+  
+  reloadBtn.addEventListener("click", reloadData);
+}
+
 // Initialize everything
 document.addEventListener("DOMContentLoaded", async function () {
   await initializeAuth();
   // Run main function after auth is initialized
   await main();
+  
+  // Setup search and reload
+  setupSearch();
+  setupReload();
 });

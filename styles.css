@@ -126,6 +126,112 @@ h1 {
     letter-spacing: -0.2px;
 }
 
+/* Search and Reload Container */
+.search-reload-container {
+    display: flex;
+    gap: 10px;
+    max-width: 800px;
+    margin: 15px auto 10px auto;
+    padding: 0 10px;
+    align-items: center;
+}
+
+.search-box-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: #9ca3af;
+    font-size: 0.9em;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 40px 10px 36px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: #1f2937;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #6b7280;
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.clear-search-btn:hover {
+    color: #6b7280;
+    background: #f3f4f6;
+}
+
+.reload-btn {
+    padding: 10px 16px;
+    background: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+}
+
+.reload-btn:hover {
+    background: #4b5563;
+    transform: scale(1.05);
+}
+
+.reload-btn:active {
+    transform: scale(0.95);
+}
+
+.reload-btn i {
+    transition: transform 0.5s ease;
+}
+
+.reload-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Clean Filter Section - Normal Flow */
 .filters-section {
     max-width: 800px;
@@ -318,6 +424,12 @@ h1 {
         font-size: 0.85em;
         flex: 0 1 auto;
         white-space: nowrap;
+    }
+
+    /* Mobile styles for search and reload */
+    .search-reload-container {
+        margin: 10px 15px;
+        padding: 0;
     }
 
     /* Mobile styles for filter section */

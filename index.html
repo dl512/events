@@ -35,6 +35,19 @@
       </div>
     </nav>
 
+    <!-- Search and Reload Section -->
+    <div class="search-reload-container">
+      <div class="search-box-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by title or location...">
+        <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <button id="reloadBtn" class="reload-btn" title="Reload data from Google Sheets">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
 
     <div class="filters-section">
       <div id="dateFiltersContainer" class="filter-row">
