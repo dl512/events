@@ -33,12 +33,9 @@ async function fetchCSV(url) {
   return data;
 }
 
-// Function to parse CSV and display events or exhibitions
-function displayData(data) {
-  const eventList = document.getElementById("eventList");
-  eventList.innerHTML = ""; // Clear previous entries
-
-  // Reset and update categories and areas
+// Function to build categories and areas from full dataset
+function buildFiltersFromData() {
+  // Reset and update categories and areas from FULL combinedData
   categories = new Set();
   areas = new Set();
   categories.add("all");
@@ -46,8 +43,8 @@ function displayData(data) {
   areas.add("all");
 
   // Collect all unique categories and areas from combined data
-  for (let i = 0; i < data.length; i++) {
-    const item = data[i];
+  for (let i = 0; i < combinedData.length; i++) {
+    const item = combinedData[i];
     if (item.isExhibition) {
       // For exhibitions, just add areas
       if (item.areas) {
@@ -65,44 +62,16 @@ function displayData(data) {
   }
 
   generateAllFilterButtons();
+}
 
-  const today = new Date();
+// Function to display events (just rendering, no filtering)
+function displayData(data) {
+  const eventList = document.getElementById("eventList");
+  eventList.innerHTML = ""; // Clear previous entries
 
+  // Just display the data that's passed in (filtering is done by applyAllFilters)
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
-
-    // Apply category filter first
-    if (currentCategory === "展覽" && !item.isExhibition) {
-      continue; // Show only exhibitions when "展覽" is selected
-    }
-    if (
-      currentCategory !== "all" &&
-      currentCategory !== "展覽" &&
-      (!item.categories || !item.categories.includes(currentCategory))
-    ) {
-      continue; // Show only events with matching category
-    }
-
-    // Apply date filters to both events and exhibitions
-    if (currentFilter !== "all") {
-      const availableDates = item.dates || [];
-      // currentFilter is now a specific date string in "dd/mm/yyyy" format
-      if (
-        !availableDates.some(
-          (date) => date.toLocaleDateString("en-GB") === currentFilter
-        )
-      ) {
-        continue;
-      }
-    }
-
-    // Apply area filter
-    if (
-      currentArea !== "all" &&
-      (!item.areas || !item.areas.includes(currentArea))
-    ) {
-      continue;
-    }
 
     // Create event/exhibition object from processed data
     const eventData = {
@@ -383,7 +352,12 @@ async function loadData() {
             dateStr: eventDateStr,
             dates: eventDates,
             venue: row[10],
-            cost: row[1] && row[1].trim() !== "" && row[1].trim().toUpperCase() !== "N/A" ? row[1].trim() : null, // Column B - cost
+            cost:
+              row[1] &&
+              row[1].trim() !== "" &&
+              row[1].trim().toUpperCase() !== "N/A"
+                ? row[1].trim()
+                : null, // Column B - cost
             url: row[5],
             photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
             categories: eventCategories,
@@ -413,7 +387,12 @@ async function loadData() {
             dateStr: exhibitionDateStr,
             dates: exhibitionDates, // Now exhibitions have proper date availability
             venue: row[10],
-            cost: row[1] && row[1].trim() !== "" && row[1].trim().toUpperCase() !== "N/A" ? row[1].trim() : null, // Column B - cost
+            cost:
+              row[1] &&
+              row[1].trim() !== "" &&
+              row[1].trim().toUpperCase() !== "N/A"
+                ? row[1].trim()
+                : null, // Column B - cost
             url: row[5],
             photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
             categories: [], // Exhibitions don't have categories except being exhibitions
@@ -426,9 +405,12 @@ async function loadData() {
 
     // Combine and store the data
     combinedData = [...processedEvents, ...processedExhibitions];
-    
+
+    // Build filter buttons from the full dataset
+    buildFiltersFromData();
+
     // Use applyAllFilters if available (handles search + filters), otherwise just display
-    if (typeof applyAllFilters === 'function') {
+    if (typeof applyAllFilters === "function") {
       applyAllFilters();
     } else {
       displayData(combinedData);
@@ -458,7 +440,7 @@ function generateDateFilterButtons() {
   }`;
   allDateButton.addEventListener("click", () => {
     currentFilter = "all";
-    generateAllFilterButtons();
+    buildFiltersFromData(); // Rebuild to update active state
     applyAllFilters();
   });
   container.appendChild(allDateButton);
@@ -484,7 +466,7 @@ function generateDateFilterButtons() {
     }`;
     button.addEventListener("click", () => {
       currentFilter = dateString;
-      generateAllFilterButtons();
+      buildFiltersFromData(); // Rebuild to update active state
       applyAllFilters();
     });
     container.appendChild(button);
@@ -504,7 +486,7 @@ function generateCategoryFilterButtons() {
   }`;
   allCategoryButton.addEventListener("click", () => {
     currentCategory = "all";
-    generateAllFilterButtons();
+    buildFiltersFromData(); // Rebuild to update active state
     applyAllFilters();
   });
   container.appendChild(allCategoryButton);
@@ -520,7 +502,7 @@ function generateCategoryFilterButtons() {
     button.textContent = category;
     button.addEventListener("click", () => {
       currentCategory = category;
-      generateAllFilterButtons();
+      buildFiltersFromData(); // Rebuild to update active state
       applyAllFilters();
     });
     container.appendChild(button);
@@ -540,7 +522,7 @@ function generateAreaFilterButtons() {
   }`;
   allAreaButton.addEventListener("click", () => {
     currentArea = "all";
-    generateAllFilterButtons();
+    buildFiltersFromData(); // Rebuild to update active state
     applyAllFilters();
   });
   container.appendChild(allAreaButton);
@@ -554,7 +536,7 @@ function generateAreaFilterButtons() {
     button.textContent = area;
     button.addEventListener("click", () => {
       currentArea = area;
-      generateAllFilterButtons();
+      buildFiltersFromData(); // Rebuild to update active state
       applyAllFilters();
     });
     container.appendChild(button);
@@ -612,14 +594,16 @@ async function initializeAuth() {
   const token = localStorage.getItem("authToken");
 
   // Skip auth check for local development (when no backend is available)
-  const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  
+  const isLocalDev =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+
   if (!savedUser || !token) {
     if (isLocalDev) {
       // For local development, create a mock user
-      currentUser = { userId: 'demo-user', name: 'Demo User' };
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      localStorage.setItem('authToken', 'demo-token');
+      currentUser = { userId: "demo-user", name: "Demo User" };
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      localStorage.setItem("authToken", "demo-token");
       updateAuthUI();
       setupEventListeners();
       return;
@@ -996,14 +980,14 @@ function setupSearch() {
 
   searchInput.addEventListener("input", (e) => {
     searchTerm = e.target.value.toLowerCase().trim();
-    
+
     // Show/hide clear button
     if (searchTerm) {
       clearSearchBtn.style.display = "flex";
     } else {
       clearSearchBtn.style.display = "none";
     }
-    
+
     // Apply search filter
     applyAllFilters();
   });
@@ -1037,7 +1021,14 @@ function applyAllFilters() {
   filteredData = filteredData.filter((item) => {
     // Date filter
     if (currentFilter !== "all") {
-      if (!item.dates || !item.dates.includes(currentFilter)) {
+      const availableDates = item.dates || [];
+      // currentFilter is a date string in "dd/mm/yyyy" format
+      // Check if any of the item's dates match the filter
+      if (
+        !availableDates.some(
+          (date) => date.toLocaleDateString("en-GB") === currentFilter
+        )
+      ) {
         return false;
       }
     }
@@ -1047,7 +1038,11 @@ function applyAllFilters() {
       if (currentCategory === "展覽") {
         if (!item.isExhibition) return false;
       } else {
-        if (item.isExhibition || !item.categories || !item.categories.includes(currentCategory)) {
+        if (
+          item.isExhibition ||
+          !item.categories ||
+          !item.categories.includes(currentCategory)
+        ) {
           return false;
         }
       }
@@ -1069,22 +1064,22 @@ function applyAllFilters() {
 // Reload data from Google Sheets
 async function reloadData() {
   const reloadBtn = document.getElementById("reloadBtn");
-  
+
   if (!reloadBtn) return;
-  
+
   // Add loading state
   reloadBtn.classList.add("loading");
   reloadBtn.disabled = true;
-  
+
   try {
     console.log("Reloading data from Google Sheets...");
-    
+
     // Re-fetch data from Google Sheets
     await loadData();
-    
+
     // Re-apply current filters
     applyAllFilters();
-    
+
     console.log("Data reloaded successfully");
   } catch (error) {
     console.error("Error reloading data:", error);
@@ -1101,9 +1096,9 @@ async function reloadData() {
 // Setup reload button
 function setupReload() {
   const reloadBtn = document.getElementById("reloadBtn");
-  
+
   if (!reloadBtn) return;
-  
+
   reloadBtn.addEventListener("click", reloadData);
 }
 
@@ -1112,7 +1107,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   await initializeAuth();
   // Run main function after auth is initialized
   await main();
-  
+
   // Setup search and reload
   setupSearch();
   setupReload();
