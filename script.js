@@ -688,6 +688,9 @@ function setupEventListeners() {
     .getElementById("discoverTab")
     ?.addEventListener("click", () => switchTab("discover"));
   document
+    .getElementById("xploreTab")
+    ?.addEventListener("click", () => switchTab("xplore"));
+  document
     .getElementById("savedTab")
     ?.addEventListener("click", () => switchTab("saved"));
   document
@@ -701,20 +704,27 @@ function setupEventListeners() {
 // Tab switching functionality
 async function switchTab(tab) {
   const discoverContent = document.getElementById("discoverContent");
+  const xploreContent = document.getElementById("xploreContent");
   const savedContent = document.getElementById("savedContent");
   const profileContent = document.getElementById("profileContent");
   const discoverTab = document.getElementById("discoverTab");
+  const xploreTab = document.getElementById("xploreTab");
   const savedTab = document.getElementById("savedTab");
   const profileTab = document.getElementById("profileTab");
   const filtersSection = document.querySelector(".filters-section");
+  const searchReloadContainer = document.querySelector(
+    ".search-reload-container"
+  );
 
   // Hide all content views
   discoverContent.style.display = "none";
+  xploreContent.style.display = "none";
   savedContent.style.display = "none";
   profileContent.style.display = "none";
 
   // Remove active class from all tabs
   discoverTab.classList.remove("active");
+  xploreTab.classList.remove("active");
   savedTab.classList.remove("active");
   profileTab.classList.remove("active");
 
@@ -723,15 +733,24 @@ async function switchTab(tab) {
     discoverContent.style.display = "block";
     discoverTab.classList.add("active");
     filtersSection.style.display = "block";
+    searchReloadContainer.style.display = "flex";
+  } else if (tab === "xplore") {
+    xploreContent.style.display = "block";
+    xploreTab.classList.add("active");
+    filtersSection.style.display = "none";
+    searchReloadContainer.style.display = "none";
+    await displayXploreEvents();
   } else if (tab === "saved") {
     savedContent.style.display = "block";
     savedTab.classList.add("active");
     filtersSection.style.display = "none";
+    searchReloadContainer.style.display = "none";
     await displaySavedActivities();
   } else if (tab === "profile") {
     profileContent.style.display = "block";
     profileTab.classList.add("active");
     filtersSection.style.display = "none";
+    searchReloadContainer.style.display = "none";
     updateProfileView();
   }
 }
@@ -1100,6 +1119,145 @@ function setupReload() {
   if (!reloadBtn) return;
 
   reloadBtn.addEventListener("click", reloadData);
+}
+
+// Xplore Events Functions
+async function fetchXploreEvents() {
+  try {
+    const response = await fetch("event.txt");
+    const text = await response.text();
+    return parseXploreEvents(text);
+  } catch (error) {
+    console.error("Error fetching Xplore events:", error);
+    return [];
+  }
+}
+
+function parseXploreEvents(text) {
+  const events = [];
+  const lines = text.split("\n");
+  let currentEvent = {};
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (line.startsWith("Event Name:")) {
+      // Save previous event if it exists
+      if (Object.keys(currentEvent).length > 0) {
+        events.push(currentEvent);
+      }
+      // Start new event
+      currentEvent = {
+        name: line.substring("Event Name:".length).trim(),
+      };
+    } else if (line.startsWith("Date:")) {
+      currentEvent.date = line.substring("Date:".length).trim();
+    } else if (line.startsWith("Time:")) {
+      currentEvent.time = line.substring("Time:".length).trim();
+    } else if (line.startsWith("Venue:")) {
+      currentEvent.venue = line.substring("Venue:".length).trim();
+    } else if (line.startsWith("Price:")) {
+      currentEvent.price = line.substring("Price:".length).trim();
+    } else if (line.startsWith("Description:")) {
+      currentEvent.description = line.substring("Description:".length).trim();
+    } else if (line.startsWith("Application link:")) {
+      currentEvent.link = line.substring("Application link:".length).trim();
+    }
+  }
+
+  // Add the last event
+  if (Object.keys(currentEvent).length > 0) {
+    events.push(currentEvent);
+  }
+
+  return events;
+}
+
+async function displayXploreEvents() {
+  const xploreEventList = document.getElementById("xploreEventList");
+
+  // Check if already loaded to avoid re-fetching
+  if (xploreEventList.children.length > 0) {
+    return;
+  }
+
+  const events = await fetchXploreEvents();
+
+  events.forEach((event) => {
+    const card = createXploreEventCard(event);
+    xploreEventList.appendChild(card);
+  });
+}
+
+function createXploreEventCard(event) {
+  const card = document.createElement("div");
+  card.className = "xplore-event-card";
+
+  // Header section with gradient background
+  const header = document.createElement("div");
+  header.className = "xplore-event-header";
+
+  const title = document.createElement("h2");
+  title.className = "xplore-event-title";
+  title.textContent = event.name;
+  header.appendChild(title);
+
+  const meta = document.createElement("div");
+  meta.className = "xplore-event-meta";
+
+  // Date
+  const dateItem = document.createElement("div");
+  dateItem.className = "xplore-meta-item";
+  dateItem.innerHTML = `<i class="fas fa-calendar-alt"></i> <span>${event.date}</span>`;
+  meta.appendChild(dateItem);
+
+  // Time
+  const timeItem = document.createElement("div");
+  timeItem.className = "xplore-meta-item";
+  timeItem.innerHTML = `<i class="fas fa-clock"></i> <span>${event.time}</span>`;
+  meta.appendChild(timeItem);
+
+  // Venue
+  const venueItem = document.createElement("div");
+  venueItem.className = "xplore-meta-item";
+  venueItem.innerHTML = `<i class="fas fa-map-marker-alt"></i> <span>${event.venue}</span>`;
+  meta.appendChild(venueItem);
+
+  header.appendChild(meta);
+  card.appendChild(header);
+
+  // Body section
+  const body = document.createElement("div");
+  body.className = "xplore-event-body";
+
+  // Description
+  const description = document.createElement("p");
+  description.className = "xplore-event-description";
+  description.textContent = event.description;
+  body.appendChild(description);
+
+  // Price
+  const priceBox = document.createElement("div");
+  priceBox.className = "xplore-event-price";
+  priceBox.innerHTML = `<strong>${event.price}</strong>`;
+  body.appendChild(priceBox);
+
+  card.appendChild(body);
+
+  // Footer with register button
+  const footer = document.createElement("div");
+  footer.className = "xplore-event-footer";
+
+  const registerBtn = document.createElement("a");
+  registerBtn.className = "xplore-register-btn";
+  registerBtn.href = event.link;
+  registerBtn.target = "_blank";
+  registerBtn.innerHTML = `Register Now <i class="fas fa-arrow-right"></i>`;
+
+  footer.appendChild(registerBtn);
+  card.appendChild(footer);
+
+  return card;
 }
 
 // Initialize everything

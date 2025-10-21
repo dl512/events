@@ -1074,3 +1074,156 @@ nav.bottom-nav {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(55, 65, 81, 0.3);
 }
+
+/* Xplore Events - Prominent Card Styles */
+.xplore-event-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 10px;
+}
+
+.xplore-event-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.xplore-event-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.xplore-event-header {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    color: #ffffff;
+    padding: 24px;
+}
+
+.xplore-event-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    color: #ffffff;
+}
+
+.xplore-event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.xplore-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e5e7eb;
+    font-size: 0.95em;
+}
+
+.xplore-meta-item i {
+    width: 20px;
+    color: #9ca3af;
+}
+
+.xplore-event-body {
+    padding: 24px;
+}
+
+.xplore-event-description {
+    color: #4b5563;
+    font-size: 0.95em;
+    line-height: 1.7;
+    margin: 0 0 20px 0;
+}
+
+.xplore-event-price {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+}
+
+.xplore-event-price strong {
+    color: #059669;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.xplore-event-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 24px 24px 24px;
+}
+
+.xplore-register-btn {
+    background: #374151;
+    color: #ffffff;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.xplore-register-btn:hover {
+    background: #1f2937;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(55, 65, 81, 0.3);
+}
+
+.xplore-register-btn i {
+    font-size: 0.9em;
+}
+
+/* Mobile styles for Xplore Events */
+@media (max-width: 600px) {
+    .xplore-event-container {
+        padding: 15px 10px;
+    }
+    
+    .xplore-event-card {
+        margin-bottom: 20px;
+        border-radius: 12px;
+    }
+    
+    .xplore-event-header {
+        padding: 20px;
+    }
+    
+    .xplore-event-title {
+        font-size: 1.3em;
+    }
+    
+    .xplore-meta-item {
+        font-size: 0.9em;
+    }
+    
+    .xplore-event-body {
+        padding: 20px;
+    }
+    
+    .xplore-event-description {
+        font-size: 0.9em;
+    }
+    
+    .xplore-event-footer {
+        padding: 0 20px 20px 20px;
+    }
+    
+    .xplore-register-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 24px;
+    }
+}
