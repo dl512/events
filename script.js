@@ -339,27 +339,27 @@ async function loadData() {
     if (eventsData && eventsData.length > 1) {
       for (let i = 1; i < eventsData.length; i++) {
         const row = eventsData[i];
-        if (row.length >= 14 && row[0].trim() === "Y") {
-          const eventDateStr = row[6] ? row[6].trim() : "";
+        if (row.length >= 15 && row[0].trim() === "Y") {
+          const eventDateStr = row[7] ? row[7].trim() : "";
           const eventDates = parseDates(eventDateStr);
           const eventCategories = row[3].split(",").map((cat) => cat.trim());
-          const eventAreas = row[12].split(",").map((area) => area.trim());
-          const uniqueId = row[13] ? row[13].trim() : null; // Column N - unique ID
+          const eventAreas = row[13].split(",").map((area) => area.trim());
+          const uniqueId = row[14] ? row[14].trim() : null; // Column O - unique ID
 
           processedEvents.push({
             id: uniqueId,
             title: row[2],
             dateStr: eventDateStr,
             dates: eventDates,
-            venue: row[10],
+            venue: row[11],
             cost:
               row[1] &&
               row[1].trim() !== "" &&
               row[1].trim().toUpperCase() !== "N/A"
                 ? row[1].trim()
                 : null, // Column B - cost
-            url: row[5],
-            photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
+            url: row[6],
+            photo: row[12] ? row[12].trim().replace(/^@/, "") : null,
             categories: eventCategories,
             areas: eventAreas,
             isExhibition: false,
@@ -373,28 +373,28 @@ async function loadData() {
     if (exhibitionsData && exhibitionsData.length > 1) {
       for (let i = 1; i < exhibitionsData.length; i++) {
         const row = exhibitionsData[i];
-        if (row.length >= 14 && row[0].trim() === "Y") {
-          const exhibitionDateStr = row[6] ? row[6].trim() : "";
+        if (row.length >= 15 && row[0].trim() === "Y") {
+          const exhibitionDateStr = row[7] ? row[7].trim() : "";
           const exhibitionDates = parseExhibitionDates(exhibitionDateStr);
-          const exhibitionAreas = row[12]
-            ? row[12].split(",").map((area) => area.trim())
+          const exhibitionAreas = row[13]
+            ? row[13].split(",").map((area) => area.trim())
             : [];
-          const uniqueId = row[13] ? row[13].trim() : null; // Column N - unique ID
+          const uniqueId = row[14] ? row[14].trim() : null; // Column O - unique ID
 
           processedExhibitions.push({
             id: uniqueId,
             title: row[2],
             dateStr: exhibitionDateStr,
             dates: exhibitionDates, // Now exhibitions have proper date availability
-            venue: row[10],
+            venue: row[11],
             cost:
               row[1] &&
               row[1].trim() !== "" &&
               row[1].trim().toUpperCase() !== "N/A"
                 ? row[1].trim()
                 : null, // Column B - cost
-            url: row[5],
-            photo: row[11] ? row[11].trim().replace(/^@/, "") : null,
+            url: row[6],
+            photo: row[12] ? row[12].trim().replace(/^@/, "") : null,
             categories: [], // Exhibitions don't have categories except being exhibitions
             areas: exhibitionAreas,
             isExhibition: true,
