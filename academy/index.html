@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XPLORE Academy - XPLORE Hong Kong</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: #fafbfc;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 20px 80px;
+            text-align: center;
+            background: #ffffff;
+        }
+
+        .hero h1 {
+            font-size: 5.5em;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            word-wrap: break-word;
+        }
+
+        .hero-subtitle {
+            font-size: 2em;
+            color: #4b5563;
+            max-width: 800px;
+            margin: 0 auto 60px;
+            line-height: 1.5;
+            font-weight: 500;
+            word-wrap: break-word;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+
+        .action-btn {
+            padding: 26px 50px;
+            background: #ffffff;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 1.4em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            min-height: 60px;
+            touch-action: manipulation;
+        }
+
+        .action-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn.secondary {
+            background: #ffffff;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+        }
+
+        .action-btn.secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        /* Photo Gallery Section */
+        .photo-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            background: #ffffff;
+        }
+
+        .section-title {
+            font-size: 3.5em;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 60px;
+            text-align: center;
+            letter-spacing: -1px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .photo-item {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 16px;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #d1d5db;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            display: block;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .photo-placeholder {
+            color: #9ca3af;
+            font-size: 0.9em;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* FAQ Section */
+        .info-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            background: #ffffff;
+        }
+
+        .info-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .info-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 0 20px;
+            transition: all 0.2s ease;
+        }
+
+        .info-item:hover {
+            background: #fafbfc;
+        }
+
+        .faq-question {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #0f172a;
+            padding: 30px 0;
+            cursor: pointer;
+            letter-spacing: -0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.2s ease;
+            user-select: none;
+            word-wrap: break-word;
+        }
+
+        .faq-question:hover {
+            color: #374151;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5em;
+            font-weight: 300;
+            color: #6b7280;
+            transition: transform 0.3s ease, color 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 20px;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .info-item.active .faq-question::after {
+            content: '−';
+            transform: rotate(0deg);
+        }
+
+        .faq-answer {
+            color: #4b5563;
+            font-size: 1.3em;
+            line-height: 1.8;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0;
+            word-wrap: break-word;
+        }
+
+        .info-item.active .faq-answer {
+            max-height: 1000px;
+            padding: 0 0 30px 0;
+        }
+
+        .faq-answer a {
+            color: #374151;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .faq-answer a:hover {
+            color: #1f2937;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer p {
+            margin: 12px 0;
+            font-size: 1.1em;
+        }
+        
+        .footer p strong {
+            font-size: 1.3em;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 20px 50px;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+                letter-spacing: -1px;
+                margin-bottom: 20px;
+                padding: 0;
+            }
+
+            .hero-subtitle {
+                font-size: 1.3em;
+                margin-bottom: 40px;
+                padding: 0;
+            }
+            
+            .action-buttons {
+                max-width: 100%;
+                gap: 16px;
+                margin-bottom: 60px;
+                padding: 0;
+            }
+
+            .action-btn {
+                font-size: 1.1em;
+                padding: 20px 24px;
+                border-radius: 12px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .section-title {
+                font-size: 2em;
+                margin-bottom: 40px;
+                padding: 0 10px;
+            }
+            
+            .photo-section {
+                padding: 50px 15px;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .photo-item {
+                border-radius: 12px;
+            }
+            
+            .info-section {
+                padding: 50px 15px;
+            }
+
+            .info-content {
+                max-width: 100%;
+            }
+
+            .info-item {
+                padding: 0 10px;
+                margin-bottom: 15px;
+            }
+            
+            .faq-question {
+                font-size: 1.4em;
+                padding: 20px 0;
+                line-height: 1.3;
+                word-wrap: break-word;
+            }
+
+            .faq-question::after {
+                font-size: 1.3em;
+                margin-left: 15px;
+                flex-shrink: 0;
+            }
+            
+            .faq-answer {
+                font-size: 1em;
+                line-height: 1.6;
+            }
+
+            .info-item.active .faq-answer {
+                padding: 0 0 20px 0;
+            }
+
+            .footer {
+                padding: 30px 15px;
+            }
+
+            .footer p {
+                font-size: 0.95em;
+            }
+            
+            .footer p strong {
+                font-size: 1.1em;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .hero {
+                padding: 40px 15px 40px;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1em;
+            }
+
+            .action-btn {
+                font-size: 1em;
+                padding: 18px 20px;
+            }
+
+            .section-title {
+                font-size: 1.8em;
+            }
+
+            .faq-question {
+                font-size: 1.2em;
+                padding: 18px 0;
+            }
+
+            .faq-answer {
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>XPLORE Academy</h1>
+        <p class="hero-subtitle">
+            Share your passion in 20 minutes
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd4D10NB-kmjiJ2enmVeZQx81xa99c2wM-SpsZIc9JxMHMe7g/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="action-btn">
+                <i class="fas fa-envelope"></i>
+                Get on the Email List
+            </a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSf-rSN1PN_L37Y9vjMRN6ZcSbIn8B9wJlxYO6wr7eY-XEFvXQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="action-btn">
+                <i class="fas fa-calendar-check"></i>
+                Join Our Next Event
+            </a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe2Y0PPRQdMxhMUwzaA5v9HwU5CXO4G2xIuFNOUI-xft89iEg/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="action-btn secondary">
+                <i class="fas fa-microphone"></i>
+                Become a Speaker
+            </a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScbGY5OnsP-lNXKjpQPryeuGopLEFUletwRfZSkEEjnJ6Ebrg/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="action-btn secondary">
+                <i class="fas fa-building"></i>
+                Be Our Venue Partner
+            </a>
+            <a href="https://instagram.com/xplorehk.academy" target="_blank" rel="noopener noreferrer" class="action-btn secondary">
+                <i class="fab fa-instagram"></i>
+                Follow Us on Instagram
+            </a>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="info-section">
+        <div class="info-content">
+            <h2 class="section-title" style="color: #0f172a;">Frequently Asked Questions</h2>
+            
+            <div class="info-item">
+                <div class="faq-question">Who are we?</div>
+                <div class="faq-answer">
+                    <p>
+                        Think of it as a TED Talk-like forum where anyone—regardless of background or experience—can share their passions. We believe that when these passions are crafted into thoughtful speeches, they have the power to inspire everyone in attendance.
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="faq-question">I am not a professor or a Nobel Prize winner; can I join as a speaker?</div>
+                <div class="faq-answer">
+                    <p>
+                        Absolutely! If you have a topic you're passionate about, we want to hear from you.
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="faq-question">I hate sitting in class. Is this not for me?</div>
+                <div class="faq-answer">
+                    <p>
+                        We believe curiosity is seeded in everyone's mind! We cover all sorts of topics, and we're sure something will resonate with you.
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="faq-question">How long is each session?</div>
+                <div class="faq-answer">
+                    <p>
+                        Theoretically, each session lasts two hours. This may include 1-3 presentations from our speakers, followed by a Q&A and opportunities to connect with others. However, in reality, people often stay behind and chat for a lot longer.
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="faq-question">How do I join?</div>
+                <div class="faq-answer">
+                    <p>
+                        Please check out our latest events <a href="https://docs.google.com/forms/d/e/1FAIpQLSf-rSN1PN_L37Y9vjMRN6ZcSbIn8B9wJlxYO6wr7eY-XEFvXQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">here</a>, or sign up our email list <a href="https://docs.google.com/forms/d/e/1FAIpQLSd4D10NB-kmjiJ2enmVeZQx81xa99c2wM-SpsZIc9JxMHMe7g/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">over here</a>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="faq-question">How do I sign up to speak?</div>
+                <div class="faq-answer">
+                    <p>
+                        Thanks for your interest! Please submit your idea <a href="https://docs.google.com/forms/d/e/1FAIpQLSe2Y0PPRQdMxhMUwzaA5v9HwU5CXO4G2xIuFNOUI-xft89iEg/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">here</a>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="faq-question">Where is XPLORE Academy usually held?</div>
+                <div class="faq-answer">
+                    <p>
+                        We are exploring different venues. Previous sessions have been held in bookstores, cafes, and restaurants. If you would like to host at your venue, please let us know <a href="https://docs.google.com/forms/d/e/1FAIpQLScbGY5OnsP-lNXKjpQPryeuGopLEFUletwRfZSkEEjnJ6Ebrg/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">here</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Gallery Section -->
+    <section class="photo-section">
+        <div class="photo-grid">
+            <div class="photo-item">
+                <img src="img/WhatsApp Image 2025-11-12 at 10.01.53_ddcb5ea2.jpg" alt="Academy event photo 1">
+            </div>
+            <div class="photo-item">
+                <img src="img/WhatsApp Image 2025-11-12 at 10.01.54_4a688226.jpg" alt="Academy event photo 2">
+            </div>
+            <div class="photo-item">
+                <img src="img/WhatsApp Image 2025-11-12 at 10.01.54_a6793ba3.jpg" alt="Academy event photo 3">
+            </div>
+            <div class="photo-item">
+                <img src="img/WhatsApp Image 2025-11-12 at 10.01.54_a6b652c6.jpg" alt="Academy event photo 4">
+            </div>
+            <div class="photo-item">
+                <img src="img/WhatsApp Image 2025-11-12 at 10.01.54_bc577025.jpg" alt="Academy event photo 5">
+            </div>
+            <div class="photo-item">
+                <img src="img/WhatsApp Image 2025-11-12 at 10.01.54_eb25e3e7.jpg" alt="Academy event photo 6">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p><strong>XPLORE Academy</strong></p>
+            <p>Share your passion in 20 minutes</p>
+            <p style="margin-top: 30px; color: #9ca3af; font-size: 1em;">
+                © 2025 XPLORE Hong Kong - All Rights Reserved
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Placeholder for future functionality
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    // For now, just scroll to section
+                    // Later, you can add modal forms or external links
+                    console.log('Action clicked:', href);
+                }
+            });
+        });
+
+        // FAQ Accordion functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all other FAQ items
+                document.querySelectorAll('.info-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Toggle current item
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
