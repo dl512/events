@@ -336,9 +336,17 @@ async function loadData() {
 
     // Process events data
     const processedEvents = [];
+    console.log("Events data received:", eventsData ? eventsData.length : 0, "rows");
     if (eventsData && eventsData.length > 1) {
       for (let i = 1; i < eventsData.length; i++) {
         const row = eventsData[i];
+        console.log(`Row ${i}:`, {
+          columnCount: row.length,
+          columnA: row[0],
+          columnA_trimmed: row[0] ? row[0].trim() : "empty",
+          hasY: row[0] ? row[0].trim() === "Y" : false,
+          title: row[2] || "no title"
+        });
         if (row.length >= 15 && row[0].trim() === "Y") {
           const eventDateStr = row[7] ? row[7].trim() : "";
           const eventDates = parseDates(eventDateStr);
@@ -370,9 +378,17 @@ async function loadData() {
 
     // Process exhibitions data
     const processedExhibitions = [];
+    console.log("Exhibitions data received:", exhibitionsData ? exhibitionsData.length : 0, "rows");
     if (exhibitionsData && exhibitionsData.length > 1) {
       for (let i = 1; i < exhibitionsData.length; i++) {
         const row = exhibitionsData[i];
+        console.log(`Exhibition Row ${i}:`, {
+          columnCount: row.length,
+          columnA: row[0],
+          columnA_trimmed: row[0] ? row[0].trim() : "empty",
+          hasY: row[0] ? row[0].trim() === "Y" : false,
+          title: row[2] || "no title"
+        });
         if (row.length >= 15 && row[0].trim() === "Y") {
           const exhibitionDateStr = row[7] ? row[7].trim() : "";
           const exhibitionDates = parseExhibitionDates(exhibitionDateStr);
@@ -405,6 +421,7 @@ async function loadData() {
 
     // Combine and store the data
     combinedData = [...processedEvents, ...processedExhibitions];
+    console.log(`Total processed: ${processedEvents.length} events, ${processedExhibitions.length} exhibitions = ${combinedData.length} total`);
 
     // Build filter buttons from the full dataset
     buildFiltersFromData();
