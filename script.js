@@ -714,6 +714,9 @@ function setupEventListeners() {
     .getElementById("profileTab")
     ?.addEventListener("click", () => switchTab("profile"));
   document
+    .getElementById("supportTab")
+    ?.addEventListener("click", () => switchTab("support"));
+  document
     .getElementById("exploreFromEmpty")
     ?.addEventListener("click", () => switchTab("discover"));
 }
@@ -724,10 +727,12 @@ async function switchTab(tab) {
   const xploreContent = document.getElementById("xploreContent");
   const savedContent = document.getElementById("savedContent");
   const profileContent = document.getElementById("profileContent");
+  const supportContent = document.getElementById("supportContent");
   const discoverTab = document.getElementById("discoverTab");
   const xploreTab = document.getElementById("xploreTab");
   const savedTab = document.getElementById("savedTab");
   const profileTab = document.getElementById("profileTab");
+  const supportTab = document.getElementById("supportTab");
   const filtersSection = document.querySelector(".filters-section");
   const searchReloadContainer = document.querySelector(
     ".search-reload-container"
@@ -738,12 +743,14 @@ async function switchTab(tab) {
   xploreContent.style.display = "none";
   savedContent.style.display = "none";
   profileContent.style.display = "none";
+  supportContent.style.display = "none";
 
   // Remove active class from all tabs
   discoverTab.classList.remove("active");
   xploreTab.classList.remove("active");
   savedTab.classList.remove("active");
   profileTab.classList.remove("active");
+  supportTab.classList.remove("active");
 
   // Show selected content and activate tab
   if (tab === "discover") {
@@ -769,6 +776,11 @@ async function switchTab(tab) {
     filtersSection.style.display = "none";
     searchReloadContainer.style.display = "none";
     updateProfileView();
+  } else if (tab === "support") {
+    supportContent.style.display = "block";
+    supportTab.classList.add("active");
+    filtersSection.style.display = "none";
+    searchReloadContainer.style.display = "none";
   }
 }
 
