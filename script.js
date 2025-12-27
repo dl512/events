@@ -739,18 +739,18 @@ async function switchTab(tab) {
   );
 
   // Hide all content views
-  discoverContent.style.display = "none";
-  xploreContent.style.display = "none";
-  savedContent.style.display = "none";
-  profileContent.style.display = "none";
-  supportContent.style.display = "none";
+  if (discoverContent) discoverContent.style.display = "none";
+  if (xploreContent) xploreContent.style.display = "none";
+  if (savedContent) savedContent.style.display = "none";
+  if (profileContent) profileContent.style.display = "none";
+  if (supportContent) supportContent.style.display = "none";
 
   // Remove active class from all tabs
-  discoverTab.classList.remove("active");
-  xploreTab.classList.remove("active");
-  savedTab.classList.remove("active");
-  profileTab.classList.remove("active");
-  supportTab.classList.remove("active");
+  if (discoverTab) discoverTab.classList.remove("active");
+  if (xploreTab) xploreTab.classList.remove("active");
+  if (savedTab) savedTab.classList.remove("active");
+  if (profileTab) profileTab.classList.remove("active");
+  if (supportTab) supportTab.classList.remove("active");
 
   // Show selected content and activate tab
   if (tab === "discover") {
@@ -777,10 +777,10 @@ async function switchTab(tab) {
     searchReloadContainer.style.display = "none";
     updateProfileView();
   } else if (tab === "support") {
-    supportContent.style.display = "block";
-    supportTab.classList.add("active");
-    filtersSection.style.display = "none";
-    searchReloadContainer.style.display = "none";
+    if (supportContent) supportContent.style.display = "block";
+    if (supportTab) supportTab.classList.add("active");
+    if (filtersSection) filtersSection.style.display = "none";
+    if (searchReloadContainer) searchReloadContainer.style.display = "none";
   }
 }
 
