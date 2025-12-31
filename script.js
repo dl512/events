@@ -218,10 +218,18 @@ function displayData(data) {
 // Function to parse various date formats and return a list of dates
 function parseDates(dateStr) {
   const dates = [];
+  
+  // Handle empty date strings
+  if (!dateStr || dateStr.trim() === "") {
+    return dates;
+  }
+  
   const year = new Date().getFullYear(); // Use current year
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize today to midnight
 
   // Split the input string by commas
-  const dateParts = dateStr.split(",").map((part) => part.trim()); // Trim whitespace
+  const dateParts = dateStr.split(",").map((part) => part.trim()).filter(part => part !== ""); // Trim whitespace and filter empty parts
 
   for (const part of dateParts) {
     if (part.startsWith("till ")) {
@@ -229,27 +237,70 @@ function parseDates(dateStr) {
       const datePart = part.substring(5).trim(); // Extract the date after "till "
       const [day, month] = datePart.split("/").map(Number);
       const endDate = new Date(year, month - 1, day);
+      endDate.setHours(0, 0, 0, 0); // Normalize to midnight
 
       // Add all dates from today to the end date
-      for (let d = new Date(); d <= endDate; d.setDate(d.getDate() + 1)) {
-        dates.push(new Date(d)); // Add each date from today to end date
+      for (let d = new Date(today); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const normalizedDate = new Date(d);
+        normalizedDate.setHours(0, 0, 0, 0);
+        dates.push(normalizedDate); // Add each date from today to end date
       }
     } else if (part.includes("-")) {
-      // Handle date ranges (e.g., "1/12-3/12")
+      // Handle date ranges (e.g., "1/12-3/12" or "20/12-5/1" which spans year boundary)
       const [start, end] = part
         .split("-")
         .map((date) => date.trim().split("/").map(Number));
       const startDate = new Date(year, start[1] - 1, start[0]);
-      const endDate = new Date(year, end[1] - 1, end[0]);
+      startDate.setHours(0, 0, 0, 0);
+      let endDate = new Date(year, end[1] - 1, end[0]);
+      endDate.setHours(0, 0, 0, 0);
 
-      for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
-        dates.push(new Date(d)); // Add each date in the range
+      // If end date is before start date, it means the range crosses year boundary
+      // So the end date should be in the next year
+      if (endDate < startDate) {
+        endDate = new Date(year + 1, end[1] - 1, end[0]);
+        endDate.setHours(0, 0, 0, 0);
+      }
+
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const normalizedDate = new Date(d);
+        normalizedDate.setHours(0, 0, 0, 0);
+        dates.push(normalizedDate); // Add each date in the range
       }
     } else {
-      // Handle single date (e.g., "16/11")
-      const [day, month] = part.split("/").map(Number);
-      dates.push(new Date(year, month - 1, day)); // Add single date
+      // Handle single date (e.g., "16/11" or "1/1")
+      try {
+        const [day, month] = part.split("/").map(Number);
+        if (isNaN(day) || isNaN(month) || day < 1 || day > 31 || month < 1 || month > 12) {
+          console.warn(`Invalid date format: ${part}`);
+          continue;
+        }
+        
+        const singleDate = new Date(year, month - 1, day);
+        singleDate.setHours(0, 0, 0, 0); // Normalize to midnight
+        
+        // If the single date is in the past (more than 2 months ago), assume it's next year
+        const twoMonthsAgo = new Date(today);
+        twoMonthsAgo.setMonth(today.getMonth() - 2);
+        twoMonthsAgo.setHours(0, 0, 0, 0);
+        
+        if (singleDate < twoMonthsAgo) {
+          const nextYearDate = new Date(year + 1, month - 1, day);
+          nextYearDate.setHours(0, 0, 0, 0);
+          dates.push(nextYearDate);
+        } else {
+          dates.push(singleDate);
+        }
+      } catch (error) {
+        console.warn(`Error parsing date part "${part}":`, error);
+        continue;
+      }
     }
+  }
+
+  // Debug logging for specific date strings
+  if (dateStr && (dateStr.includes("1/1") || dateStr.trim() === "1/1")) {
+    console.log(`parseDates("${dateStr}") returned:`, dates.map(d => d.toLocaleDateString("en-GB")));
   }
 
   return dates; // Return all parsed dates
@@ -340,39 +391,62 @@ async function loadData() {
     if (eventsData && eventsData.length > 1) {
       for (let i = 1; i < eventsData.length; i++) {
         const row = eventsData[i];
-        console.log(`Row ${i}:`, {
+        const rowInfo = {
           columnCount: row.length,
           columnA: row[0],
           columnA_trimmed: row[0] ? row[0].trim() : "empty",
           hasY: row[0] ? row[0].trim() === "Y" : false,
-          title: row[2] || "no title"
-        });
-        if (row.length >= 15 && row[0].trim() === "Y") {
-          const eventDateStr = row[7] ? row[7].trim() : "";
-          const eventDates = parseDates(eventDateStr);
-          const eventCategories = row[3].split(",").map((cat) => cat.trim());
-          const eventAreas = row[13].split(",").map((area) => area.trim());
-          const uniqueId = row[14] ? row[14].trim() : null; // Column O - unique ID
-
-          processedEvents.push({
-            id: uniqueId,
-            title: row[2],
-            dateStr: eventDateStr,
-            dates: eventDates,
-            venue: row[11],
-            cost:
-              row[1] &&
-              row[1].trim() !== "" &&
-              row[1].trim().toUpperCase() !== "N/A"
-                ? row[1].trim()
-                : null, // Column B - cost
-            url: row[6],
-            photo: row[12] ? row[12].trim().replace(/^@/, "") : null,
-            categories: eventCategories,
-            areas: eventAreas,
-            isExhibition: false,
-          });
+          title: row[2] || "no title",
+          dateStr: row[7] || "empty"
+        };
+        
+        // Only log rows that match our criteria or have interesting data
+        if (row[2] && row[2].includes("情感")) {
+          console.log(`Row ${i} (debugging):`, rowInfo);
         }
+        
+        // Check if row has minimum required columns and is marked as active (Y)
+        if (!row[0] || row[0].trim() !== "Y") {
+          continue; // Skip rows that aren't marked as active
+        }
+        
+        // Ensure row has minimum required columns (at least 8 for date column)
+        if (row.length < 8) {
+          console.warn(`Row ${i} has insufficient columns (${row.length}), skipping`);
+          continue;
+        }
+        
+        const eventDateStr = row[7] ? row[7].trim() : "";
+        const eventDates = parseDates(eventDateStr);
+        
+        // Log if dates array is empty after parsing
+        if (eventDates.length === 0 && eventDateStr) {
+          console.warn(`Row ${i} (${row[2]}): Date string "${eventDateStr}" parsed to empty dates array`);
+        }
+        
+        // Split categories and areas safely
+        const eventCategories = row[3] ? row[3].split(",").map((cat) => cat.trim()).filter(cat => cat) : [];
+        const eventAreas = row[13] ? row[13].split(",").map((area) => area.trim()).filter(area => area) : [];
+        const uniqueId = row[14] ? row[14].trim() : null; // Column O - unique ID
+
+        processedEvents.push({
+          id: uniqueId,
+          title: row[2] || "Untitled Event",
+          dateStr: eventDateStr,
+          dates: eventDates,
+          venue: row[11] || "",
+          cost:
+            row[1] &&
+            row[1].trim() !== "" &&
+            row[1].trim().toUpperCase() !== "N/A"
+              ? row[1].trim()
+              : null, // Column B - cost
+          url: row[6] || "",
+          photo: row[12] ? row[12].trim().replace(/^@/, "") : null,
+          categories: eventCategories,
+          areas: eventAreas,
+          isExhibition: false,
+        });
       }
     }
 
@@ -422,12 +496,23 @@ async function loadData() {
     // Combine and store the data
     combinedData = [...processedEvents, ...processedExhibitions];
     console.log(`Total processed: ${processedEvents.length} events, ${processedExhibitions.length} exhibitions = ${combinedData.length} total`);
+    
+    // Log some example events to verify they have dates
+    if (processedEvents.length > 0) {
+      console.log("Sample processed events:", processedEvents.slice(0, 3).map(e => ({
+        title: e.title,
+        dateStr: e.dateStr,
+        datesCount: e.dates ? e.dates.length : 0,
+        firstDate: e.dates && e.dates.length > 0 ? e.dates[0].toLocaleDateString("en-GB") : "none"
+      })));
+    }
 
     // Build filter buttons from the full dataset
     buildFiltersFromData();
 
     // Use applyAllFilters if available (handles search + filters), otherwise just display
     if (typeof applyAllFilters === "function") {
+      console.log(`Applying filters - currentFilter: "${currentFilter}", currentCategory: "${currentCategory}", currentArea: "${currentArea}"`);
       applyAllFilters();
     } else {
       displayData(combinedData);
@@ -1055,6 +1140,7 @@ function setupSearch() {
 function applyAllFilters() {
   // Filter combined data based on current filters AND search term
   let filteredData = combinedData;
+  const initialCount = filteredData.length;
 
   // Apply search filter
   if (searchTerm) {
@@ -1070,14 +1156,33 @@ function applyAllFilters() {
     // Date filter
     if (currentFilter !== "all") {
       const availableDates = item.dates || [];
-      // currentFilter is a date string in "dd/mm/yyyy" format
-      // Check if any of the item's dates match the filter
-      if (
-        !availableDates.some(
-          (date) => date.toLocaleDateString("en-GB") === currentFilter
-        )
-      ) {
+      
+      // If no dates available and date string is empty, skip date filtering (show all)
+      if (availableDates.length === 0 && (!item.dateStr || item.dateStr.trim() === "")) {
+        // Event has no date specified, so it passes date filter
+      } else if (availableDates.length === 0) {
+        // Date string exists but parsing failed - skip this item when filtering by specific date
+        if (item.title && item.title.includes("情感")) {
+          console.log(`Filtering out "${item.title}" - date string "${item.dateStr}" parsed to empty dates array`);
+        }
         return false;
+      } else {
+        // currentFilter is a date string in "dd/mm/yyyy" format
+        // Check if any of the item's dates match the filter
+        // Normalize dates to ensure accurate comparison (set time to midnight)
+        const filterDateMatch = availableDates.some((date) => {
+          const normalizedDate = new Date(date);
+          normalizedDate.setHours(0, 0, 0, 0);
+          const dateStr = normalizedDate.toLocaleDateString("en-GB");
+          return dateStr === currentFilter;
+        });
+        
+        if (!filterDateMatch) {
+          if (item.title && item.title.includes("情感")) {
+            console.log(`Filtering out "${item.title}" - dates [${availableDates.map(d => d.toLocaleDateString("en-GB")).join(", ")}] don't match filter "${currentFilter}"`);
+          }
+          return false;
+        }
       }
     }
 
@@ -1106,6 +1211,7 @@ function applyAllFilters() {
     return true;
   });
 
+  console.log(`applyAllFilters: ${initialCount} items -> ${filteredData.length} items after filtering`);
   displayData(filteredData);
 }
 
