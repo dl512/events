@@ -118,6 +118,7 @@ function displayData(data) {
       const image = document.createElement("img");
       image.className = "event-image";
       image.alt = eventData.title;
+      image.style.cursor = "pointer"; // Make it clear the image is clickable
 
       // Create a link wrapper
       const imageLink = document.createElement("a");
@@ -127,6 +128,19 @@ function displayData(data) {
 
       // Set image source
       image.src = eventData.photo;
+
+      // Add click handler to open modal
+      image.addEventListener("click", function(e) {
+        try {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof openImageModal === "function") {
+            openImageModal(eventData.photo, eventData.title);
+          }
+        } catch (error) {
+          console.error("Error opening image modal:", error);
+        }
+      });
 
       // Add both versions
       imageContainer.appendChild(image);
@@ -1048,6 +1062,21 @@ async function displaySavedActivities() {
       image.className = "event-image";
       image.alt = activity.title;
       image.src = activity.photo;
+      image.style.cursor = "pointer"; // Make it clear the image is clickable
+      
+      // Add click handler to open modal
+      image.addEventListener("click", function(e) {
+        try {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof openImageModal === "function") {
+            openImageModal(activity.photo, activity.title);
+          }
+        } catch (error) {
+          console.error("Error opening image modal:", error);
+        }
+      });
+      
       image.onerror = function () {
         image.style.display = "none";
         const defaultIcon = document.createElement("i");
@@ -1395,6 +1424,52 @@ function createXploreEventCard(event) {
   return card;
 }
 
+// Image Modal Functions
+function openImageModal(imageSrc, imageAlt) {
+  const modal = document.getElementById("imageModal");
+  const modalImage = document.getElementById("modalImage");
+  
+  if (modal && modalImage) {
+    modalImage.src = imageSrc;
+    modalImage.alt = imageAlt || "Event image";
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden"; // Prevent background scrolling
+  }
+}
+
+function closeImageModal() {
+  const modal = document.getElementById("imageModal");
+  if (modal) {
+    modal.style.display = "none";
+    document.body.style.overflow = ""; // Restore scrolling
+  }
+}
+
+// Setup modal event listeners
+function setupImageModal() {
+  const modal = document.getElementById("imageModal");
+  const closeBtn = document.querySelector(".modal-close");
+  
+  if (modal && closeBtn) {
+    // Close when clicking the X button
+    closeBtn.addEventListener("click", closeImageModal);
+    
+    // Close when clicking outside the image (on the modal background)
+    modal.addEventListener("click", function(e) {
+      if (e.target === modal) {
+        closeImageModal();
+      }
+    });
+    
+    // Close when pressing Escape key
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && modal.style.display === "flex") {
+        closeImageModal();
+      }
+    });
+  }
+}
+
 // Initialize everything
 document.addEventListener("DOMContentLoaded", async function () {
   await initializeAuth();
@@ -1404,4 +1479,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Setup search and reload
   setupSearch();
   setupReload();
+  
+  // Setup image modal
+  setupImageModal();
 });

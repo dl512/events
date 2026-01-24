@@ -227,6 +227,7 @@ h1 {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -276,13 +277,17 @@ h1 {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 10px; /* Same padding as filters */
+    padding: 0 10px;
+    /* Same padding as filters */
 }
 
 .event-card {
-    width: calc(100% - 20px); /* Account for container padding */
-    max-width: 760px; /* 800px container - 20px padding - 20px margin */
-    margin: 0 auto 16px auto; /* Center the cards */
+    width: calc(100% - 20px);
+    /* Account for container padding */
+    max-width: 760px;
+    /* 800px container - 20px padding - 20px margin */
+    margin: 0 auto 16px auto;
+    /* Center the cards */
     display: flex;
     flex-direction: row-reverse;
     gap: 16px;
@@ -323,6 +328,11 @@ h1 {
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
+    transition: opacity 0.2s ease;
+}
+
+.event-image-container img:hover {
+    opacity: 0.9;
 }
 
 .event-image-container a {
@@ -346,7 +356,8 @@ h1 {
 
 .event-content {
     flex: 1;
-    min-width: 0; /* Prevents content from overflowing */
+    min-width: 0;
+    /* Prevents content from overflowing */
 }
 
 .event-content h2 {
@@ -370,8 +381,10 @@ h1 {
 }
 
 .event-cost {
-    color: #059669 !important; /* Green color for cost */
-    font-weight: 600 !important; /* Bold for cost */
+    color: #059669 !important;
+    /* Green color for cost */
+    font-weight: 600 !important;
+    /* Bold for cost */
 }
 
 .event-content p:first-of-type {
@@ -387,15 +400,18 @@ h1 {
 @media (max-width: 600px) {
     .event {
         padding: 15px;
-        margin: 10px; /* Adjusted for mobile */
+        margin: 10px;
+        /* Adjusted for mobile */
     }
 
     .event h2 {
-        font-size: 1.4em; /* Adjusted for mobile */
+        font-size: 1.4em;
+        /* Adjusted for mobile */
     }
 
     .event p {
-        font-size: 0.9em; /* Consistent font size for mobile */
+        font-size: 0.9em;
+        /* Consistent font size for mobile */
     }
 
     .event-card {
@@ -443,12 +459,15 @@ h1 {
         gap: 6px;
         margin-bottom: 10px;
         /* Hide scrollbars on mobile */
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* Internet Explorer 10+ */
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
     }
 
     .filter-row::-webkit-scrollbar {
-        display: none; /* WebKit */
+        display: none;
+        /* WebKit */
     }
 
     .filter-btn {
@@ -459,13 +478,16 @@ h1 {
 
     /* Mobile event list and cards */
     #eventList {
-        margin: 0 15px; /* Increase side margins */
+        margin: 0 15px;
+        /* Increase side margins */
         padding: 0;
     }
-    
+
     .event-card {
-        width: 100%; /* Full width on mobile since parent has margins */
-        max-width: none; /* Remove max-width restriction on mobile */
+        width: 100%;
+        /* Full width on mobile since parent has margins */
+        max-width: none;
+        /* Remove max-width restriction on mobile */
         margin: 0 0 12px 0;
         padding: 16px;
         border-radius: 10px;
@@ -475,9 +497,10 @@ h1 {
     #savedContent {
         /* Let it inherit from content-view */
     }
-    
+
     #savedEventList {
-        margin: 0 15px; /* Same margins as eventList */
+        margin: 0 15px;
+        /* Same margins as eventList */
         padding: 0;
     }
 }
@@ -608,7 +631,8 @@ h1 {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(255, 255, 255, 0.7); /* More transparent */
+    background: rgba(255, 255, 255, 0.7);
+    /* More transparent */
     border: none;
     border-radius: 50%;
     width: 36px;
@@ -618,9 +642,12 @@ h1 {
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    backdrop-filter: blur(8px); /* More blur for better contrast */
-    z-index: 1000; /* Ensure it's on top */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    backdrop-filter: blur(8px);
+    /* More blur for better contrast */
+    z-index: 1000;
+    /* Ensure it's on top */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
 }
 
 .heart-btn:hover {
@@ -631,21 +658,27 @@ h1 {
 
 .heart-btn i {
     font-size: 1.2em;
-    color: #9ca3af; /* Lighter grey for unliked state */
-    transition: transform 0.2s ease; /* Only animate transform, not color */
+    color: #9ca3af;
+    /* Lighter grey for unliked state */
+    transition: transform 0.2s ease;
+    /* Only animate transform, not color */
 }
 
 .heart-btn:hover i {
-    color: #6b7280; /* Darker grey on hover when unliked */
+    color: #6b7280;
+    /* Darker grey on hover when unliked */
 }
 
 .heart-btn.saved i {
-    color: #ef4444 !important; /* Bright red when saved - instant change */
-    transition: none; /* No transition for saved state */
+    color: #ef4444 !important;
+    /* Bright red when saved - instant change */
+    transition: none;
+    /* No transition for saved state */
 }
 
 .heart-btn.saved:hover i {
-    color: #dc2626 !important; /* Darker red on hover when saved */
+    color: #dc2626 !important;
+    /* Darker red on hover when saved */
 }
 
 /* Update event card to be relative for heart button positioning */
@@ -672,7 +705,8 @@ h1 {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 10px; /* Same as #eventList */
+    padding: 0 10px;
+    /* Same as #eventList */
 }
 
 .empty-state {
@@ -889,15 +923,18 @@ h1 {
     background: #f8fafc;
     min-height: 100vh;
     display: flex;
-    align-items: flex-start; /* Align to top instead of center */
+    align-items: flex-start;
+    /* Align to top instead of center */
     justify-content: center;
-    padding: 40px 20px 20px 20px; /* More top padding, less bottom */
+    padding: 40px 20px 20px 20px;
+    /* More top padding, less bottom */
 }
 
 .auth-container {
     width: 100%;
     max-width: 400px;
-    margin-top: 0; /* Remove any top margin */
+    margin-top: 0;
+    /* Remove any top margin */
 }
 
 .auth-card {
@@ -1091,7 +1128,8 @@ nav.bottom-nav {
 }
 
 .nav-tab span {
-    font-size: 0.85em; /* Larger text */
+    font-size: 0.85em;
+    /* Larger text */
     font-weight: 500;
 }
 
@@ -1101,12 +1139,14 @@ nav.bottom-nav {
 
 /* Add padding to main content to account for bottom nav only */
 .main-content-with-nav {
-    padding: 20px 0 80px 0; /* Normal top padding, space for bottom nav */
+    padding: 20px 0 80px 0;
+    /* Normal top padding, space for bottom nav */
 }
 
 /* Ensure all content views have proper spacing */
 .content-view {
-    padding-bottom: 20px; /* Space above bottom nav */
+    padding-bottom: 20px;
+    /* Space above bottom nav */
 }
 
 
@@ -1266,71 +1306,167 @@ nav.bottom-nav {
     .xplore-event-container {
         padding: 15px 10px;
     }
-    
+
     .xplore-event-card {
         margin-bottom: 20px;
         border-radius: 12px;
     }
-    
+
     .xplore-event-header {
         padding: 20px;
     }
-    
+
     .xplore-event-title {
         font-size: 1.3em;
     }
-    
+
     .xplore-meta-item {
         font-size: 0.9em;
     }
-    
+
     .xplore-event-body {
         padding: 20px;
     }
-    
+
     .xplore-event-description {
         font-size: 0.9em;
     }
-    
+
     .xplore-event-footer {
         padding: 0 20px 20px 20px;
     }
-    
+
     .xplore-register-btn {
         width: 100%;
         justify-content: center;
         padding: 12px 24px;
     }
-    
+
     .support-container {
         padding: 30px 15px;
     }
-    
+
     .support-header h2 {
         font-size: 1.75em;
     }
-    
+
     .support-header p {
         font-size: 1em;
     }
-    
+
     .support-button {
         width: 100%;
         max-width: 300px;
         padding: 14px 28px;
         font-size: 1em;
     }
-    
+
     .support-note {
         font-size: 0.9em;
         padding: 0 10px;
     }
-    
+
     .nav-tab span {
-        font-size: 0.75em; /* Slightly smaller for 5 tabs on mobile */
+        font-size: 0.75em;
+        /* Slightly smaller for 5 tabs on mobile */
     }
-    
+
     .nav-tab {
         padding: 6px 4px;
+    }
+}
+
+/* Image Modal Styles */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.image-modal.show {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #ffffff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10001;
+    transition: color 0.2s ease;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-close:hover {
+    color: #f0f0f0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-close:active {
+    transform: scale(0.95);
+}
+
+/* Mobile responsive for modal */
+@media (max-width: 768px) {
+    .modal-close {
+        top: 10px;
+        right: 15px;
+        font-size: 30px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .modal-image {
+        max-width: 95%;
+        max-height: 85%;
     }
 }
